@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>収集データ閲覧 - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        /* データヘッダー */
+        .data-header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .data-header h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        /* フィルターセクション */
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-item label {
+            font-weight: bold;
+            color: #34495e;
+        }
+        .filter-item select,
+        .filter-item input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-filter {
+            padding: 8px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-filter:hover {
+            background-color: #2980b9;
+        }
+        /* タブナビゲーション */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+            background: white;
+            padding: 0 20px;
+            border-radius: 10px 10px 0 0;
+        }
+        .tab-btn {
+            padding: 15px 25px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .tab-btn.active {
+            color: #3498db;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #3498db;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* サマリーカード */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .summary-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .summary-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .summary-label {
+            color: #666;
+            font-size: 14px;
+        }
+        .summary-trend {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .trend-up {
+            color: #27ae60;
+        }
+        .trend-down {
+            color: #e74c3c;
+        }
+        /* チャートセクション */
+        .chart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            height: 300px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        /* データテーブル */
+        .data-table {
+            width: 100%;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .data-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        /* ヒートマップ */
+        .heatmap-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .heatmap-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .heat-low {
+            background-color: #e8f8f5;
+            color: #27ae60;
+        }
+        .heat-medium {
+            background-color: #f9e79f;
+            color: #f39c12;
+        }
+        .heat-high {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        /* エクスポートセクション */
+        .export-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn-export {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-csv {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-csv:hover {
+            background-color: #229954;
+        }
+        .btn-pdf {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-pdf:hover {
+            background-color: #c0392b;
+        }
+        .btn-excel {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .btn-excel:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🗑️ ゴミ人間レンタル</div>
+            <div class="user-info">
+                <span>株式会社サンプル 様</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- パンくずリスト -->
+        <div class="breadcrumb">
+            <a href="06_client_dashboard.html">ダッシュボード</a> &gt; 
+            <a href="11_service_status.html">サービス実施状況</a> &gt; 
+            収集データ閲覧
+        </div>
+
+        <!-- データヘッダー -->
+        <div class="data-header">
+            <h1>渋谷音楽祭2024 - 収集データ分析</h1>
+            
+            <!-- フィルターセクション -->
+            <div class="filter-section">
+                <div class="filter-item">
+                    <label>期間：</label>
+                    <input type="date" value="2024-03-15">
+                    <span>〜</span>
+                    <input type="date" value="2024-03-17">
+                </div>
+                <div class="filter-item">
+                    <label>エリア：</label>
+                    <select>
+                        <option>全エリア</option>
+                        <option>ハチ公前広場</option>
+                        <option>センター街</option>
+                        <option>宮益坂</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>スタッフ：</label>
+                    <select>
+                        <option>全スタッフ</option>
+                        <option>田中</option>
+                        <option>佐藤</option>
+                        <option>鈴木</option>
+                        <option>山田</option>
+                    </select>
+                </div>
+                <button class="btn-filter">フィルター適用</button>
+            </div>
+        </div>
+
+        <!-- サマリーカード -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-icon">🗑️</div>
+                <div class="summary-value">386.7kg</div>
+                <div class="summary-label">総回収ゴミ量</div>
+                <div class="summary-trend trend-up">▲ 前回比 +23.5%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">🚶</div>
+                <div class="summary-value">48.6km</div>
+                <div class="summary-label">総巡回距離</div>
+                <div class="summary-trend trend-up">▲ 前回比 +12.3%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">👥</div>
+                <div class="summary-value">2,847人</div>
+                <div class="summary-label">総対応人数</div>
+                <div class="summary-trend trend-up">▲ 前回比 +45.2%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">📸</div>
+                <div class="summary-value">892枚</div>
+                <div class="summary-label">総撮影写真数</div>
+                <div class="summary-trend trend-up">▲ 前回比 +67.8%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">⭐</div>
+                <div class="summary-value">4.8/5.0</div>
+                <div class="summary-label">満足度評価</div>
+                <div class="summary-trend trend-up">▲ 前回比 +0.3pt</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">💬</div>
+                <div class="summary-value">156件</div>
+                <div class="summary-label">SNS投稿数</div>
+                <div class="summary-trend trend-up">▲ 前回比 +89.2%</div>
+            </div>
+        </div>
+
+        <!-- タブナビゲーション -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab('overview')">概要</button>
+            <button class="tab-btn" onclick="showTab('garbage')">ゴミ回収データ</button>
+            <button class="tab-btn" onclick="showTab('activity')">活動データ</button>
+            <button class="tab-btn" onclick="showTab('engagement')">エンゲージメント</button>
+            <button class="tab-btn" onclick="showTab('heatmap')">ヒートマップ</button>
+        </div>
+
+        <!-- 概要タブ -->
+        <div id="overview" class="tab-content active">
+            <div class="chart-section">
+                <h2>日別推移グラフ</h2>
+                <div class="chart-container">
+                    <p style="font-size: 48px; color: #95a5a6;">📊</p>
+                    <p style="color: #95a5a6;">日別の各種データ推移グラフ</p>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2>時間帯別活動状況</h2>
+                <div class="chart-container">
+                    <p style="font-size: 48px; color: #95a5a6;">📈</p>
+                    <p style="color: #95a5a6;">時間帯別の活動グラフ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ゴミ回収データタブ -->
+        <div id="garbage" class="tab-content">
+            <div class="chart-section">
+                <h2>ゴミ種類別内訳</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ゴミの種類</th>
+                            <th>重量(kg)</th>
+                            <th>割合</th>
+                            <th>前回比</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ペットボトル</td>
+                            <td>142.3</td>
+                            <td>36.8%</td>
+                            <td class="trend-up">+15.2%</td>
+                        </tr>
+                        <tr>
+                            <td>缶</td>
+                            <td>89.7</td>
+                            <td>23.2%</td>
+                            <td class="trend-up">+8.5%</td>
+                        </tr>
+                        <tr>
+                            <td>紙くず</td>
+                            <td>67.4</td>
+                            <td>17.4%</td>
+                            <td class="trend-down">-3.2%</td>
+                        </tr>
+                        <tr>
+                            <td>ビニール袋</td>
+                            <td>45.2</td>
+                            <td>11.7%</td>
+                            <td class="trend-up">+22.1%</td>
+                        </tr>
+                        <tr>
+                            <td>タバコの吸い殻</td>
+                            <td>23.8</td>
+                            <td>6.2%</td>
+                            <td class="trend-down">-12.5%</td>
+                        </tr>
+                        <tr>
+                            <td>その他</td>
+                            <td>18.3</td>
+                            <td>4.7%</td>
+                            <td class="trend-up">+5.3%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-section">
+                <h2>エリア別回収量</h2>
+                <div class="chart-container">
+                    <p style="font-size: 48px; color: #95a5a6;">📊</p>
+                    <p style="color: #95a5a6;">エリア別ゴミ回収量グラフ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活動データタブ -->
+        <div id="activity" class="tab-content">
+            <div class="chart-section">
+                <h2>スタッフ別活動実績</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>スタッフ名</th>
+                            <th>活動時間</th>
+                            <th>巡回距離</th>
+                            <th>回収量</th>
+                            <th>対応人数</th>
+                            <th>評価</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>田中 太郎</td>
+                            <td>24時間</td>
+                            <td>15.2km</td>
+                            <td>112.3kg</td>
+                            <td>856人</td>
+                            <td>⭐4.9</td>
+                        </tr>
+                        <tr>
+                            <td>佐藤 花子</td>
+                            <td>24時間</td>
+                            <td>13.8km</td>
+                            <td>98.7kg</td>
+                            <td>923人</td>
+                            <td>⭐4.8</td>
+                        </tr>
+                        <tr>
+                            <td>鈴木 次郎</td>
+                            <td>18時間</td>
+                            <td>10.5km</td>
+                            <td>87.4kg</td>
+                            <td>567人</td>
+                            <td>⭐4.7</td>
+                        </tr>
+                        <tr>
+                            <td>山田 三郎</td>
+                            <td>18時間</td>
+                            <td>9.1km</td>
+                            <td>88.3kg</td>
+                            <td>501人</td>
+                            <td>⭐4.8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-section">
+                <h2>移動ルート効率性</h2>
+                <div class="chart-container">
+                    <p style="font-size: 48px; color: #95a5a6;">🗺️</p>
+                    <p style="color: #95a5a6;">移動ルート効率性分析</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- エンゲージメントタブ -->
+        <div id="engagement" class="tab-content">
+            <div class="chart-section">
+                <h2>来場者エンゲージメント</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>件数</th>
+                            <th>割合</th>
+                            <th>備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>写真撮影</td>
+                            <td>892件</td>
+                            <td>31.3%</td>
+                            <td>SNS投稿率：45%</td>
+                        </tr>
+                        <tr>
+                            <td>会話・質問</td>
+                            <td>1,234件</td>
+                            <td>43.3%</td>
+                            <td>平均対話時間：2.3分</td>
+                        </tr>
+                        <tr>
+                            <td>ゴミ投入</td>
+                            <td>567件</td>
+                            <td>19.9%</td>
+                            <td>協力率：89%</td>
+                        </tr>
+                        <tr>
+                            <td>パンフレット配布</td>
+                            <td>154件</td>
+                            <td>5.4%</td>
+                            <td>QRコード読取率：23%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-section">
+                <h2>SNS反響分析</h2>
+                <div class="chart-container">
+                    <p style="font-size: 48px; color: #95a5a6;">💬</p>
+                    <p style="color: #95a5a6;">SNS投稿分析グラフ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ヒートマップタブ -->
+        <div id="heatmap" class="tab-content">
+            <div class="heatmap-container">
+                <h2>時間帯×エリア別活動ヒートマップ</h2>
+                <p style="margin-bottom: 20px;">クリックで詳細データを表示</p>
+                
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 0 0 100px;">
+                        <div style="height: 40px;"></div>
+                        <div style="height: 40px; display: flex; align-items: center;">10:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">11:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">12:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">13:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">14:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">15:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">16:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">17:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">18:00</div>
+                        <div style="height: 40px; display: flex; align-items: center;">19:00</div>
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                            <div style="flex: 1; text-align: center; font-size: 14px;">ハチ公前</div>
+                            <div style="flex: 1; text-align: center; font-size: 14px;">センター街</div>
+                            <div style="flex: 1; text-align: center; font-size: 14px;">宮益坂</div>
+                            <div style="flex: 1; text-align: center; font-size: 14px;">駅東口</div>
+                        </div>
+                        
+                        <div class="heatmap-grid" style="grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(10, 40px);">
+                            <!-- 10:00 -->
+                            <div class="heatmap-cell heat-medium">45</div>
+                            <div class="heatmap-cell heat-low">23</div>
+                            <div class="heatmap-cell heat-low">18</div>
+                            <div class="heatmap-cell heat-medium">38</div>
+                            <!-- 11:00 -->
+                            <div class="heatmap-cell heat-high">78</div>
+                            <div class="heatmap-cell heat-medium">56</div>
+                            <div class="heatmap-cell heat-low">32</div>
+                            <div class="heatmap-cell heat-medium">45</div>
+                            <!-- 12:00 -->
+                            <div class="heatmap-cell heat-high">92</div>
+                            <div class="heatmap-cell heat-high">87</div>
+                            <div class="heatmap-cell heat-medium">54</div>
+                            <div class="heatmap-cell heat-high">76</div>
+                            <!-- 13:00 -->
+                            <div class="heatmap-cell heat-high">85</div>
+                            <div class="heatmap-cell heat-high">79</div>
+                            <div class="heatmap-cell heat-medium">48</div>
+                            <div class="heatmap-cell heat-medium">62</div>
+                            <!-- 14:00 -->
+                            <div class="heatmap-cell heat-high">89</div>
+                            <div class="heatmap-cell heat-medium">65</div>
+                            <div class="heatmap-cell heat-medium">52</div>
+                            <div class="heatmap-cell heat-medium">58</div>
+                            <!-- 15:00 -->
+                            <div class="heatmap-cell heat-high">94</div>
+                            <div class="heatmap-cell heat-high">72</div>
+                            <div class="heatmap-cell heat-medium">61</div>
+                            <div class="heatmap-cell heat-high">71</div>
+                            <!-- 16:00 -->
+                            <div class="heatmap-cell heat-high">88</div>
+                            <div class="heatmap-cell heat-high">83</div>
+                            <div class="heatmap-cell heat-medium">55</div>
+                            <div class="heatmap-cell heat-high">74</div>
+                            <!-- 17:00 -->
+                            <div class="heatmap-cell heat-high">91</div>
+                            <div class="heatmap-cell heat-high">89</div>
+                            <div class="heatmap-cell heat-high">68</div>
+                            <div class="heatmap-cell heat-high">82</div>
+                            <!-- 18:00 -->
+                            <div class="heatmap-cell heat-high">86</div>
+                            <div class="heatmap-cell heat-high">95</div>
+                            <div class="heatmap-cell heat-medium">62</div>
+                            <div class="heatmap-cell heat-high">78</div>
+                            <!-- 19:00 -->
+                            <div class="heatmap-cell heat-medium">67</div>
+                            <div class="heatmap-cell heat-high">88</div>
+                            <div class="heatmap-cell heat-medium">45</div>
+                            <div class="heatmap-cell heat-medium">65</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; margin-top: 30px; justify-content: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background-color: #e8f8f5; border-radius: 3px;"></div>
+                        <span>低（0-40）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background-color: #f9e79f; border-radius: 3px;"></div>
+                        <span>中（41-70）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 20px; height: 20px; background-color: #fadbd8; border-radius: 3px;"></div>
+                        <span>高（71-100）</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- エクスポートセクション -->
+        <div class="export-section">
+            <h2>データエクスポート</h2>
+            <p>収集したデータを各種形式でダウンロードできます。</p>
+            
+            <div class="export-buttons">
+                <button class="btn-export btn-csv">
+                    📄 CSV形式
+                </button>
+                <button class="btn-export btn-excel">
+                    📊 Excel形式
+                </button>
+                <button class="btn-export btn-pdf">
+                    📑 PDF形式
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // タブ切り替え
+        function showTab(tabName) {
+            // すべてのタブコンテンツを非表示
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // すべてのタブボタンを非アクティブ化
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // 選択されたタブを表示
+            document.getElementById(tabName).classList.add('active');
+            
+            // 選択されたボタンをアクティブ化
+            event.target.classList.add('active');
+        }
+
+        // ヒートマップセルクリック
+        document.querySelectorAll('.heatmap-cell').forEach(cell => {
+            cell.addEventListener('click', function() {
+                alert(`活動密度: ${this.textContent}\n詳細データを表示`);
+            });
+        });
+
+        // エクスポートボタン
+        document.querySelectorAll('.btn-export').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('データのエクスポートを開始します...');
+            });
+        });
+    </script>
+</body>
+</html> 

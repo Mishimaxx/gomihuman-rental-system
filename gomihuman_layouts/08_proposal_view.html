@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企画・見積確認 - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .proposal-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        /* ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .status-badge.pending {
+            background-color: #f39c12;
+            color: white;
+        }
+        .status-badge.approved {
+            background-color: #27ae60;
+            color: white;
+        }
+        .status-badge.rejected {
+            background-color: #e74c3c;
+            color: white;
+        }
+        /* セクション */
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .section h2 {
+            color: #34495e;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 詳細テーブル */
+        .detail-table {
+            width: 100%;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .detail-table tr {
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .detail-table th {
+            background-color: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            width: 30%;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .detail-table td {
+            padding: 15px;
+            color: #2c3e50;
+        }
+        /* 見積テーブル */
+        .estimate-table {
+            width: 100%;
+            background: white;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .estimate-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .estimate-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .estimate-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .estimate-table .text-right {
+            text-align: right;
+        }
+        .estimate-table .total-row {
+            font-weight: bold;
+            background-color: #ecf0f1;
+        }
+        .estimate-table .grand-total {
+            font-size: 18px;
+            color: #e74c3c;
+        }
+        /* アクションボタン */
+        .action-section {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-approve {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-approve:hover {
+            background-color: #229954;
+        }
+        .btn-reject {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-reject:hover {
+            background-color: #c0392b;
+        }
+        .btn-request-change {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-request-change:hover {
+            background-color: #e67e22;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        /* メモ欄 */
+        .memo-section {
+            margin-top: 30px;
+        }
+        .memo-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .memo-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        /* 注意事項 */
+        .notice-box {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .notice-box h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+        .notice-box ul {
+            list-style-position: inside;
+            color: #0c5460;
+            font-size: 14px;
+        }
+        .notice-box li {
+            margin-bottom: 5px;
+        }
+        /* ダウンロードリンク */
+        .download-link {
+            color: #3498db;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .download-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🗑️ ゴミ人間レンタル</div>
+            <div class="user-info">
+                <span>株式会社サンプル 様</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- パンくずリスト -->
+        <div class="breadcrumb">
+            <a href="06_client_dashboard.html">ダッシュボード</a> &gt; 企画・見積確認
+        </div>
+
+        <!-- 企画・見積コンテナ -->
+        <div class="proposal-container">
+            <h1>企画・見積確認</h1>
+            
+            <span class="status-badge pending">承認待ち</span>
+
+            <!-- 依頼概要セクション -->
+            <div class="section">
+                <h2>依頼概要</h2>
+                <table class="detail-table">
+                    <tr>
+                        <th>依頼番号</th>
+                        <td>REQ-2024-0156</td>
+                    </tr>
+                    <tr>
+                        <th>イベント名</th>
+                        <td>渋谷音楽祭2024</td>
+                    </tr>
+                    <tr>
+                        <th>実施期間</th>
+                        <td>2024年3月15日（金）〜 3月17日（日）</td>
+                    </tr>
+                    <tr>
+                        <th>実施場所</th>
+                        <td>東京都渋谷区 渋谷駅周辺エリア</td>
+                    </tr>
+                    <tr>
+                        <th>予想来場者数</th>
+                        <td>約50,000人</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 企画内容セクション -->
+            <div class="section">
+                <h2>企画内容</h2>
+                <table class="detail-table">
+                    <tr>
+                        <th>ゴミ人間配置人数</th>
+                        <td>6名（各日2名×3日間）</td>
+                    </tr>
+                    <tr>
+                        <th>活動時間</th>
+                        <td>10:00〜20:00（休憩含む）</td>
+                    </tr>
+                    <tr>
+                        <th>巡回エリア</th>
+                        <td>
+                            ・ハチ公前広場<br>
+                            ・センター街入口<br>
+                            ・宮益坂下交差点
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>広告掲載内容</th>
+                        <td>
+                            前面：貴社ロゴ + 「渋谷音楽祭2024」<br>
+                            背面：「ポイ捨て禁止」メッセージ
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>特別対応</th>
+                        <td>
+                            ・英語対応可能スタッフ1名配置<br>
+                            ・SNS用撮影スポット設置<br>
+                            ・リアルタイム活動レポート配信
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 見積内容セクション -->
+            <div class="section">
+                <h2>見積内容</h2>
+                <table class="estimate-table">
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>数量</th>
+                            <th>単価</th>
+                            <th class="text-right">金額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ゴミ人間レンタル基本料金</td>
+                            <td>6名×3日間</td>
+                            <td>¥30,000/名・日</td>
+                            <td class="text-right">¥540,000</td>
+                        </tr>
+                        <tr>
+                            <td>広告掲載料金</td>
+                            <td>6名×3日間</td>
+                            <td>¥10,000/名・日</td>
+                            <td class="text-right">¥180,000</td>
+                        </tr>
+                        <tr>
+                            <td>英語対応スタッフ追加料金</td>
+                            <td>1名×3日間</td>
+                            <td>¥5,000/名・日</td>
+                            <td class="text-right">¥15,000</td>
+                        </tr>
+                        <tr>
+                            <td>SNSスポット設置費</td>
+                            <td>一式</td>
+                            <td>¥50,000</td>
+                            <td class="text-right">¥50,000</td>
+                        </tr>
+                        <tr>
+                            <td>リアルタイムレポート配信</td>
+                            <td>3日間</td>
+                            <td>¥20,000/日</td>
+                            <td class="text-right">¥60,000</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3">小計</td>
+                            <td class="text-right">¥845,000</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">消費税（10%）</td>
+                            <td class="text-right">¥84,500</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3">合計金額</td>
+                            <td class="text-right grand-total">¥929,500</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <a href="estimate_pdf.pdf" class="download-link">
+                    📄 見積書PDFをダウンロード
+                </a>
+            </div>
+
+            <!-- メモ欄 -->
+            <div class="memo-section">
+                <h3>修正依頼・コメント（任意）</h3>
+                <textarea id="memo" name="memo" placeholder="修正をご希望の場合は、こちらに詳細をご記入ください"></textarea>
+                <p class="memo-hint">※最大1000文字まで入力可能です</p>
+            </div>
+
+            <!-- 注意事項 -->
+            <div class="notice-box">
+                <h3>📌 ご確認事項</h3>
+                <ul>
+                    <li>見積有効期限：2024年2月28日まで</li>
+                    <li>お支払い条件：サービス実施後30日以内</li>
+                    <li>キャンセル規定：実施7日前まで無料、以降は料金の50%</li>
+                    <li>天候による中止の場合：料金の30%（準備費用）</li>
+                    <li>追加料金が発生する場合は事前にご連絡いたします</li>
+                </ul>
+            </div>
+
+            <!-- アクションセクション -->
+            <div class="action-section">
+                <h3>この企画・見積内容でよろしいですか？</h3>
+                <p>承認後、契約締結の手続きに進みます。</p>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-approve" onclick="approveProposal()">
+                        承認する
+                    </button>
+                    <button class="btn btn-request-change" onclick="requestChange()">
+                        修正を依頼
+                    </button>
+                    <button class="btn btn-reject" onclick="rejectProposal()">
+                        却下する
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <a href="06_client_dashboard.html" class="btn btn-secondary">
+                        後で確認する
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function approveProposal() {
+            if (confirm('この企画・見積内容で承認してよろしいですか？')) {
+                alert('承認しました。契約締結画面へ進みます。');
+                window.location.href = '09_contract.html';
+            }
+        }
+
+        function requestChange() {
+            const memo = document.getElementById('memo').value;
+            if (!memo) {
+                alert('修正内容をメモ欄に記入してください。');
+                document.getElementById('memo').focus();
+                return;
+            }
+            if (confirm('修正を依頼してよろしいですか？')) {
+                alert('修正依頼を送信しました。');
+                window.location.href = '06_client_dashboard.html';
+            }
+        }
+
+        function rejectProposal() {
+            if (confirm('この企画・見積を却下してよろしいですか？')) {
+                alert('却下しました。');
+                window.location.href = '06_client_dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html> 

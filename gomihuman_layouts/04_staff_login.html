@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スタッフログイン - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border-top: 5px solid #9b59b6;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #9b59b6;
+            font-size: 24px;
+        }
+        .logo p {
+            color: #666;
+            margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #9b59b6;
+        }
+        .input-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-login {
+            background-color: #9b59b6;
+            color: white;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            background-color: #8e44ad;
+        }
+        .btn-login:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .info-box {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #0c5460;
+        }
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #333;
+        }
+        .validation-rules {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        .validation-rules h4 {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .validation-rules ul {
+            list-style-position: inside;
+            color: #666;
+        }
+        .forgot-link {
+            text-align: right;
+            margin-top: 10px;
+        }
+        .forgot-link a {
+            color: #9b59b6;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- ロゴ -->
+        <div class="logo">
+            <h1>👤 ゴミ人間レンタル</h1>
+            <p>スタッフログイン</p>
+        </div>
+
+        <!-- 情報ボックス -->
+        <div class="info-box">
+            <strong>📢 スタッフの皆様へ</strong>
+            活動前に必ずログインして、作業指示を確認してください。
+        </div>
+
+        <!-- ログインフォーム -->
+        <form id="loginForm" action="27_staff_dashboard.html" method="POST" onsubmit="return validateForm()">
+            <!-- スタッフID入力 -->
+            <div class="form-group">
+                <label for="staffId">スタッフID <span style="color: red;">*</span></label>
+                <input 
+                    type="text" 
+                    id="staffId" 
+                    name="staffId" 
+                    required
+                    placeholder="例：ST2024001"
+                    maxlength="10"
+                    pattern="ST[0-9]{7}"
+                >
+                <p class="input-hint">※STから始まる9文字のID</p>
+                <p class="error-msg" id="staffId-error">正しいスタッフIDを入力してください（例：ST2024001）</p>
+            </div>
+
+            <!-- パスワード入力 -->
+            <div class="form-group">
+                <label for="password">パスワード <span style="color: red;">*</span></label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    placeholder="パスワードを入力"
+                    minlength="6"
+                    maxlength="20"
+                >
+                <p class="input-hint">※6文字以上20文字以下</p>
+                <p class="error-msg" id="password-error">パスワードは6文字以上で入力してください</p>
+            </div>
+
+            <!-- パスワードを忘れた場合 -->
+            <div class="forgot-link">
+                <a href="password_reset_staff.html">パスワードを忘れた方</a>
+            </div>
+
+            <!-- ログインボタン -->
+            <button type="submit" class="btn btn-login" id="loginBtn">
+                スタッフとしてログイン
+            </button>
+
+            <!-- エラーメッセージ（サーバーエラー） -->
+            <p class="error-msg" id="server-error" style="text-align: center; margin-top: 10px;">
+                ログインに失敗しました。スタッフIDまたはパスワードが正しくありません。
+            </p>
+        </form>
+
+        <!-- トップページへ戻る -->
+        <a href="01_top_page.html" class="back-link">
+            ← トップページへ戻る
+        </a>
+
+        <!-- 入力規則の説明 -->
+        <div class="validation-rules">
+            <h4>入力規則</h4>
+            <ul>
+                <li>スタッフID：STで始まる9文字（例：ST2024001）</li>
+                <li>パスワード：6文字以上20文字以下</li>
+                <li>ログイン試行回数：5回まで（超過時は30分ロック）</li>
+            </ul>
+            <p style="margin-top: 10px; color: #e74c3c;">
+                ※初回ログイン時は管理者から配布されたIDとパスワードを使用してください
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            const staffId = document.getElementById('staffId');
+            const password = document.getElementById('password');
+            const staffIdError = document.getElementById('staffId-error');
+            const passwordError = document.getElementById('password-error');
+            let isValid = true;
+
+            // スタッフIDの検証
+            const staffIdRegex = /^ST[0-9]{7}$/;
+            if (!staffIdRegex.test(staffId.value)) {
+                staffIdError.classList.add('show');
+                isValid = false;
+            } else {
+                staffIdError.classList.remove('show');
+            }
+
+            // パスワードの検証
+            if (password.value.length < 6) {
+                passwordError.classList.add('show');
+                isValid = false;
+            } else {
+                passwordError.classList.remove('show');
+            }
+
+            // 仮のログイン処理（実際はサーバー側で処理）
+            if (isValid) {
+                // デモ用：特定の値でログイン成功とする
+                if (staffId.value === 'ST2024001' && password.value === 'staff123') {
+                    return true;
+                } else {
+                    document.getElementById('server-error').classList.add('show');
+                    return false;
+                }
+            }
+
+            return isValid;
+        }
+
+        // リアルタイムバリデーション
+        document.getElementById('staffId').addEventListener('input', function() {
+            const staffIdError = document.getElementById('staffId-error');
+            // 入力中は部分的な検証
+            if (this.value.length > 0 && !this.value.startsWith('ST')) {
+                staffIdError.classList.add('show');
+            } else if (this.value.length === 9) {
+                const staffIdRegex = /^ST[0-9]{7}$/;
+                if (!staffIdRegex.test(this.value)) {
+                    staffIdError.classList.add('show');
+                } else {
+                    staffIdError.classList.remove('show');
+                }
+            } else {
+                staffIdError.classList.remove('show');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const passwordError = document.getElementById('password-error');
+            if (this.value.length < 6 && this.value !== '') {
+                passwordError.classList.add('show');
+            } else {
+                passwordError.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html> 

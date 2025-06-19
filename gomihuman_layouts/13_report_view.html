@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>実施報告書 - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        /* レポートコンテナ */
+        .report-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .report-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .report-date {
+            color: #666;
+            font-size: 16px;
+        }
+        /* セクション */
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #34495e;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 18px;
+            margin: 20px 0 15px;
+        }
+        /* サマリーボックス */
+        .summary-box {
+            background-color: #e8f4fd;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .summary-item {
+            text-align: center;
+        }
+        .summary-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        .summary-label {
+            color: #666;
+            font-size: 14px;
+        }
+        /* 実施詳細テーブル */
+        .detail-table {
+            width: 100%;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .detail-table th {
+            background-color: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            color: #34495e;
+            width: 30%;
+        }
+        .detail-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        /* 成果テーブル */
+        .result-table {
+            width: 100%;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .result-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .result-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .result-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        /* ハイライトボックス */
+        .highlight-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .highlight-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .highlight-box ul {
+            list-style-position: inside;
+            color: #856404;
+        }
+        .highlight-box li {
+            margin-bottom: 5px;
+        }
+        /* 写真ギャラリー */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .photo-item {
+            aspect-ratio: 4/3;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #95a5a6;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+        /* 改善提案 */
+        .suggestion-box {
+            background-color: #e8f8f5;
+            border: 1px solid #a9dfbf;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .suggestion-box h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        /* ダウンロードセクション */
+        .download-section {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #ecf0f1;
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 40px;
+            background-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+        .download-btn:hover {
+            background-color: #c0392b;
+        }
+        /* 評価セクション */
+        .rating-section {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .star-rating {
+            font-size: 36px;
+            color: #f39c12;
+            margin: 10px 0;
+        }
+        /* フッター情報 */
+        .report-footer {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🗑️ ゴミ人間レンタル</div>
+            <div class="user-info">
+                <span>株式会社サンプル 様</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- パンくずリスト -->
+        <div class="breadcrumb">
+            <a href="06_client_dashboard.html">ダッシュボード</a> &gt; 実施報告書
+        </div>
+
+        <!-- レポートコンテナ -->
+        <div class="report-container">
+            <!-- レポートヘッダー -->
+            <div class="report-header">
+                <h1>サービス実施報告書</h1>
+                <p class="report-date">渋谷音楽祭2024</p>
+                <p class="report-date">実施期間：2024年3月15日〜17日</p>
+            </div>
+
+            <!-- エグゼクティブサマリー -->
+            <div class="section">
+                <h2>エグゼクティブサマリー</h2>
+                <div class="summary-box">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="summary-value">386.7kg</div>
+                            <div class="summary-label">総回収ゴミ量</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">2,847人</div>
+                            <div class="summary-label">総対応人数</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">98.5%</div>
+                            <div class="summary-label">計画達成率</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-value">4.8/5.0</div>
+                            <div class="summary-label">満足度評価</div>
+                        </div>
+                    </div>
+                </div>
+                <p>
+                    渋谷音楽祭2024におけるゴミ人間レンタルサービスは、3日間にわたり計画通り実施されました。
+                    総勢6名のスタッフが渋谷駅周辺エリアを巡回し、イベント来場者へのゴミ回収サービスと
+                    環境美化啓発活動を行いました。期間中、大きなトラブルもなく、
+                    クライアント様の広告効果も十分に達成できたものと評価しております。
+                </p>
+            </div>
+
+            <!-- 実施概要 -->
+            <div class="section">
+                <h2>実施概要</h2>
+                <table class="detail-table">
+                    <tr>
+                        <th>契約番号</th>
+                        <td>CTR-2024-0156</td>
+                    </tr>
+                    <tr>
+                        <th>イベント名</th>
+                        <td>渋谷音楽祭2024</td>
+                    </tr>
+                    <tr>
+                        <th>実施期間</th>
+                        <td>2024年3月15日（金）〜 3月17日（日）</td>
+                    </tr>
+                    <tr>
+                        <th>実施時間</th>
+                        <td>10:00〜20:00（休憩時間含む）</td>
+                    </tr>
+                    <tr>
+                        <th>実施場所</th>
+                        <td>東京都渋谷区 渋谷駅周辺エリア<br>
+                            （ハチ公前広場、センター街、宮益坂、渋谷駅東口）</td>
+                    </tr>
+                    <tr>
+                        <th>配置スタッフ</th>
+                        <td>6名（各日2名体制×3日間）</td>
+                    </tr>
+                    <tr>
+                        <th>総活動時間</th>
+                        <td>84時間（延べ）</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 活動成果 -->
+            <div class="section">
+                <h2>活動成果</h2>
+                
+                <h3>1. ゴミ回収実績</h3>
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>回収量(kg)</th>
+                            <th>主な回収物</th>
+                            <th>特記事項</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3月15日（金）</td>
+                            <td>112.3</td>
+                            <td>ペットボトル、缶、紙くず</td>
+                            <td>初日は比較的少なめ</td>
+                        </tr>
+                        <tr>
+                            <td>3月16日（土）</td>
+                            <td>156.8</td>
+                            <td>ペットボトル、缶、ビニール袋</td>
+                            <td>来場者数ピーク</td>
+                        </tr>
+                        <tr>
+                            <td>3月17日（日）</td>
+                            <td>117.6</td>
+                            <td>ペットボトル、缶、食品包装</td>
+                            <td>最終日清掃含む</td>
+                        </tr>
+                        <tr style="font-weight: bold;">
+                            <td>合計</td>
+                            <td>386.7</td>
+                            <td colspan="2">前回イベント比 +23.5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>2. 来場者エンゲージメント</h3>
+                <div class="highlight-box">
+                    <h4>📊 主な成果指標</h4>
+                    <ul>
+                        <li>総対応人数：2,847人（1日平均949人）</li>
+                        <li>写真撮影対応：892件（SNS投稿確認：401件）</li>
+                        <li>外国人対応：234件（英語スタッフが対応）</li>
+                        <li>ゴミ分別指導：567件</li>
+                        <li>パンフレット配布：154部</li>
+                    </ul>
+                </div>
+
+                <h3>3. 広告効果測定</h3>
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>指標</th>
+                            <th>実績値</th>
+                            <th>目標値</th>
+                            <th>達成率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>推定リーチ数</td>
+                            <td>約45,000人</td>
+                            <td>40,000人</td>
+                            <td>112.5%</td>
+                        </tr>
+                        <tr>
+                            <td>SNS投稿数</td>
+                            <td>401件</td>
+                            <td>300件</td>
+                            <td>133.7%</td>
+                        </tr>
+                        <tr>
+                            <td>推定インプレッション</td>
+                            <td>約180万回</td>
+                            <td>150万回</td>
+                            <td>120.0%</td>
+                        </tr>
+                        <tr>
+                            <td>QRコード読取数</td>
+                            <td>89件</td>
+                            <td>50件</td>
+                            <td>178.0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 活動写真 -->
+            <div class="section">
+                <h2>活動記録写真</h2>
+                <div class="photo-gallery">
+                    <div class="photo-item">📷</div>
+                    <div class="photo-item">📷</div>
+                    <div class="photo-item">📷</div>
+                    <div class="photo-item">📷</div>
+                    <div class="photo-item">📷</div>
+                    <div class="photo-item">📷</div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #666;">
+                    ※高解像度写真は別途お送りいたします
+                </p>
+            </div>
+
+            <!-- お客様の声 -->
+            <div class="section">
+                <h2>来場者の声</h2>
+                <div class="rating-section">
+                    <h3>総合満足度</h3>
+                    <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                    <p>4.8 / 5.0（アンケート回答数：156件）</p>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>💬 主なコメント</h4>
+                    <ul>
+                        <li>「ゴミ箱を背負った人がいて面白い！一緒に写真を撮ってもらった」（20代女性）</li>
+                        <li>「環境に配慮したイベントで素晴らしい」（30代男性）</li>
+                        <li>「スタッフの対応が親切で、ゴミの分別も教えてもらえた」（40代女性）</li>
+                        <li>「外国人の友人も英語で対応してもらえて助かった」（20代男性）</li>
+                        <li>「企業の社会貢献活動として評価できる」（50代男性）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 改善提案 -->
+            <div class="section">
+                <h2>今後の改善提案</h2>
+                <div class="suggestion-box">
+                    <h4>🎯 次回実施に向けた提案</h4>
+                    <ol>
+                        <li><strong>スタッフ増員の検討</strong><br>
+                            土曜日のピーク時間帯（14:00-17:00）は対応が追いつかない場面があったため、
+                            1-2名の増員を推奨します。</li>
+                        <li><strong>SNS連携の強化</strong><br>
+                            専用ハッシュタグキャンペーンを実施し、投稿者への特典を用意することで、
+                            さらなる拡散効果が期待できます。</li>
+                        <li><strong>多言語対応の拡充</strong><br>
+                            中国語・韓国語対応スタッフの配置により、
+                            インバウンド観光客へのアプローチを強化できます。</li>
+                        <li><strong>デジタルサイネージの活用</strong><br>
+                            タブレット端末を活用した動的な広告表示により、
+                            より効果的な情報発信が可能です。</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- 総括 -->
+            <div class="section">
+                <h2>総括</h2>
+                <p>
+                    渋谷音楽祭2024におけるゴミ人間レンタルサービスは、
+                    環境美化と広告効果の両面で大きな成果を上げることができました。
+                    特に、SNSでの拡散効果は予想を大きく上回り、
+                    貴社のブランドイメージ向上に貢献できたものと考えております。
+                </p>
+                <p style="margin-top: 15px;">
+                    スタッフ一同、来場者との交流を通じて多くの笑顔を生み出すことができ、
+                    単なるゴミ回収を超えた価値を提供できたことを誇りに思います。
+                    今後も、社会貢献と企業価値向上を両立させるサービスとして、
+                    さらなる改善を重ねてまいります。
+                </p>
+            </div>
+
+            <!-- ダウンロードセクション -->
+            <div class="download-section">
+                <a href="report_full.pdf" class="download-btn">
+                    📥 完全版報告書をダウンロード（PDF）
+                </a>
+            </div>
+
+            <!-- フッター -->
+            <div class="report-footer">
+                <p>本報告書に関するお問い合わせ</p>
+                <p>ゴミ人間レンタルサービス 運営事務局</p>
+                <p>TEL: 03-1234-5678 / Email: report@gomihuman-rental.jp</p>
+                <p style="margin-top: 10px;">報告書作成日：2024年3月20日</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

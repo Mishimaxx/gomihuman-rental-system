@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者ログイン - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border-top: 5px solid #e74c3c;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #e74c3c;
+            font-size: 24px;
+        }
+        .logo p {
+            color: #666;
+            margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+        .input-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-login {
+            background-color: #e74c3c;
+            color: white;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            background-color: #c0392b;
+        }
+        .btn-login:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .security-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #856404;
+        }
+        .security-notice strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #333;
+        }
+        .validation-rules {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        .validation-rules h4 {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .validation-rules ul {
+            list-style-position: inside;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- ロゴ -->
+        <div class="logo">
+            <h1>⚙️ ゴミ人間レンタル</h1>
+            <p>管理者ログイン</p>
+        </div>
+
+        <!-- セキュリティ注意事項 -->
+        <div class="security-notice">
+            <strong>⚠️ セキュリティ注意事項</strong>
+            管理者権限でのアクセスです。不正なアクセスは記録されます。
+        </div>
+
+        <!-- ログインフォーム -->
+        <form id="loginForm" action="16_admin_dashboard.html" method="POST" onsubmit="return validateForm()">
+            <!-- 管理者ID入力 -->
+            <div class="form-group">
+                <label for="adminId">管理者ID <span style="color: red;">*</span></label>
+                <input 
+                    type="text" 
+                    id="adminId" 
+                    name="adminId" 
+                    required
+                    placeholder="管理者IDを入力"
+                    maxlength="20"
+                    pattern="[A-Za-z0-9]+"
+                >
+                <p class="input-hint">※半角英数字のみ</p>
+                <p class="error-msg" id="adminId-error">正しい管理者IDを入力してください</p>
+            </div>
+
+            <!-- パスワード入力 -->
+            <div class="form-group">
+                <label for="password">パスワード <span style="color: red;">*</span></label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    placeholder="パスワードを入力"
+                    minlength="10"
+                    maxlength="32"
+                >
+                <p class="input-hint">※10文字以上32文字以下</p>
+                <p class="error-msg" id="password-error">パスワードは10文字以上で入力してください</p>
+            </div>
+
+            <!-- 二要素認証コード -->
+            <div class="form-group">
+                <label for="authCode">認証コード <span style="color: red;">*</span></label>
+                <input 
+                    type="text" 
+                    id="authCode" 
+                    name="authCode" 
+                    required
+                    placeholder="6桁の認証コード"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                >
+                <p class="input-hint">※認証アプリに表示される6桁のコード</p>
+                <p class="error-msg" id="authCode-error">6桁の数字を入力してください</p>
+            </div>
+
+            <!-- ログインボタン -->
+            <button type="submit" class="btn btn-login" id="loginBtn">
+                管理者としてログイン
+            </button>
+
+            <!-- エラーメッセージ（サーバーエラー） -->
+            <p class="error-msg" id="server-error" style="text-align: center; margin-top: 10px;">
+                ログインに失敗しました。入力情報を確認してください。
+            </p>
+        </form>
+
+        <!-- トップページへ戻る -->
+        <a href="01_top_page.html" class="back-link">
+            ← トップページへ戻る
+        </a>
+
+        <!-- 入力規則の説明 -->
+        <div class="validation-rules">
+            <h4>入力規則</h4>
+            <ul>
+                <li>管理者ID：半角英数字、最大20文字</li>
+                <li>パスワード：10文字以上32文字以下</li>
+                <li>認証コード：6桁の数字</li>
+                <li>ログイン試行回数：3回まで（超過時は60分ロック）</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            const adminId = document.getElementById('adminId');
+            const password = document.getElementById('password');
+            const authCode = document.getElementById('authCode');
+            const adminIdError = document.getElementById('adminId-error');
+            const passwordError = document.getElementById('password-error');
+            const authCodeError = document.getElementById('authCode-error');
+            let isValid = true;
+
+            // 管理者IDの検証
+            const adminIdRegex = /^[A-Za-z0-9]+$/;
+            if (!adminIdRegex.test(adminId.value)) {
+                adminIdError.classList.add('show');
+                isValid = false;
+            } else {
+                adminIdError.classList.remove('show');
+            }
+
+            // パスワードの検証
+            if (password.value.length < 10) {
+                passwordError.classList.add('show');
+                isValid = false;
+            } else {
+                passwordError.classList.remove('show');
+            }
+
+            // 認証コードの検証
+            const authCodeRegex = /^[0-9]{6}$/;
+            if (!authCodeRegex.test(authCode.value)) {
+                authCodeError.classList.add('show');
+                isValid = false;
+            } else {
+                authCodeError.classList.remove('show');
+            }
+
+            // 仮のログイン処理（実際はサーバー側で処理）
+            if (isValid) {
+                // デモ用：特定の値でログイン成功とする
+                if (adminId.value === 'admin001' && password.value === 'password1234' && authCode.value === '123456') {
+                    return true;
+                } else {
+                    document.getElementById('server-error').classList.add('show');
+                    return false;
+                }
+            }
+
+            return isValid;
+        }
+
+        // リアルタイムバリデーション
+        document.getElementById('adminId').addEventListener('input', function() {
+            const adminIdRegex = /^[A-Za-z0-9]*$/;
+            const adminIdError = document.getElementById('adminId-error');
+            if (!adminIdRegex.test(this.value) && this.value !== '') {
+                adminIdError.classList.add('show');
+            } else {
+                adminIdError.classList.remove('show');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const passwordError = document.getElementById('password-error');
+            if (this.value.length < 10 && this.value !== '') {
+                passwordError.classList.add('show');
+            } else {
+                passwordError.classList.remove('show');
+            }
+        });
+
+        document.getElementById('authCode').addEventListener('input', function() {
+            const authCodeError = document.getElementById('authCode-error');
+            if (this.value.length !== 6 && this.value !== '') {
+                authCodeError.classList.add('show');
+            } else {
+                authCodeError.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html> 

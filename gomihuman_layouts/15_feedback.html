@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フィードバック入力 - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        /* フィードバックコンテナ */
+        .feedback-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .feedback-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .feedback-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .feedback-header p {
+            color: #666;
+            font-size: 16px;
+        }
+        /* サービス情報 */
+        .service-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .service-info h3 {
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        .info-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        /* フォームセクション */
+        .form-section {
+            margin-bottom: 35px;
+        }
+        .form-section h3 {
+            color: #34495e;
+            margin-bottom: 20px;
+            font-size: 18px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        /* 評価セクション */
+        .rating-group {
+            margin-bottom: 25px;
+        }
+        .rating-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .rating-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .star-rating {
+            display: flex;
+            gap: 5px;
+        }
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .star:hover,
+        .star.active {
+            color: #f39c12;
+        }
+        /* テキストエリア */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        /* チェックボックス */
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .checkbox-item label {
+            cursor: pointer;
+            color: #2c3e50;
+        }
+        /* 推奨度 */
+        .recommend-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .scale-numbers {
+            display: flex;
+            gap: 10px;
+        }
+        .scale-number {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .scale-number:hover {
+            border-color: #3498db;
+            background-color: #e8f4fd;
+        }
+        .scale-number.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+        /* 同意確認 */
+        .agreement-box {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .agreement-item {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .agreement-item input {
+            margin-top: 3px;
+        }
+        /* ボタン */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        .btn-primary:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        /* 完了メッセージ */
+        .thank-you-message {
+            text-align: center;
+            padding: 60px 20px;
+            display: none;
+        }
+        .thank-you-message h2 {
+            color: #27ae60;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .thank-you-message p {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .success-icon {
+            font-size: 64px;
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🗑️ ゴミ人間レンタル</div>
+            <div class="user-info">
+                <span>株式会社サンプル 様</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- パンくずリスト -->
+        <div class="breadcrumb">
+            <a href="06_client_dashboard.html">ダッシュボード</a> &gt; フィードバック入力
+        </div>
+
+        <!-- フィードバックコンテナ -->
+        <div class="feedback-container">
+            <!-- フィードバックフォーム -->
+            <div id="feedbackForm">
+                <!-- ヘッダー -->
+                <div class="feedback-header">
+                    <h1>サービスフィードバック</h1>
+                    <p>貴重なご意見をお聞かせください</p>
+                </div>
+
+                <!-- サービス情報 -->
+                <div class="service-info">
+                    <h3>ご利用サービス情報</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">イベント名</span>
+                            <span class="info-value">渋谷音楽祭2024</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">実施期間</span>
+                            <span class="info-value">2024年3月15日〜17日</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">契約番号</span>
+                            <span class="info-value">CTR-2024-0156</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">総回収ゴミ量</span>
+                            <span class="info-value">386.7kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 評価セクション -->
+                <div class="form-section">
+                    <h3>サービス評価</h3>
+                    <div class="rating-group">
+                        <div class="rating-item">
+                            <span class="rating-label">総合満足度</span>
+                            <div class="star-rating" data-rating="overall">
+                                <span class="star" data-value="1">⭐</span>
+                                <span class="star" data-value="2">⭐</span>
+                                <span class="star" data-value="3">⭐</span>
+                                <span class="star" data-value="4">⭐</span>
+                                <span class="star" data-value="5">⭐</span>
+                            </div>
+                        </div>
+                        <div class="rating-item">
+                            <span class="rating-label">スタッフの対応</span>
+                            <div class="star-rating" data-rating="staff">
+                                <span class="star" data-value="1">⭐</span>
+                                <span class="star" data-value="2">⭐</span>
+                                <span class="star" data-value="3">⭐</span>
+                                <span class="star" data-value="4">⭐</span>
+                                <span class="star" data-value="5">⭐</span>
+                            </div>
+                        </div>
+                        <div class="rating-item">
+                            <span class="rating-label">広告効果</span>
+                            <div class="star-rating" data-rating="advertising">
+                                <span class="star" data-value="1">⭐</span>
+                                <span class="star" data-value="2">⭐</span>
+                                <span class="star" data-value="3">⭐</span>
+                                <span class="star" data-value="4">⭐</span>
+                                <span class="star" data-value="5">⭐</span>
+                            </div>
+                        </div>
+                        <div class="rating-item">
+                            <span class="rating-label">コストパフォーマンス</span>
+                            <div class="star-rating" data-rating="value">
+                                <span class="star" data-value="1">⭐</span>
+                                <span class="star" data-value="2">⭐</span>
+                                <span class="star" data-value="3">⭐</span>
+                                <span class="star" data-value="4">⭐</span>
+                                <span class="star" data-value="5">⭐</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 良かった点 -->
+                <div class="form-section">
+                    <h3>特に良かった点</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="good1" name="good_points" value="staff_quality">
+                            <label for="good1">スタッフの接客態度</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="good2" name="good_points" value="cleaning_effect">
+                            <label for="good2">環境美化効果</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="good3" name="good_points" value="sns_buzz">
+                            <label for="good3">SNSでの話題性</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="good4" name="good_points" value="flexibility">
+                            <label for="good4">柔軟な対応</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="good5" name="good_points" value="reporting">
+                            <label for="good5">詳細なレポート</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="good6" name="good_points" value="planning">
+                            <label for="good6">事前計画の充実</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="goodComments">その他良かった点（任意）</label>
+                        <textarea id="goodComments" name="good_comments" placeholder="具体的にお聞かせください"></textarea>
+                        <div class="char-count">0 / 500文字</div>
+                    </div>
+                </div>
+
+                <!-- 改善点 -->
+                <div class="form-section">
+                    <h3>改善してほしい点</h3>
+                    <div class="form-group">
+                        <label for="improvements">ご意見・ご要望をお聞かせください（任意）</label>
+                        <textarea id="improvements" name="improvements" placeholder="サービス向上のため、率直なご意見をお願いします"></textarea>
+                        <div class="char-count">0 / 500文字</div>
+                    </div>
+                </div>
+
+                <!-- 推奨度 -->
+                <div class="form-section">
+                    <h3>他社への推奨度</h3>
+                    <p style="margin-bottom: 15px;">このサービスを他の企業に勧める可能性はどのくらいですか？</p>
+                    <div class="recommend-scale">
+                        <div class="scale-numbers">
+                            <div class="scale-number" data-score="0">0</div>
+                            <div class="scale-number" data-score="1">1</div>
+                            <div class="scale-number" data-score="2">2</div>
+                            <div class="scale-number" data-score="3">3</div>
+                            <div class="scale-number" data-score="4">4</div>
+                            <div class="scale-number" data-score="5">5</div>
+                            <div class="scale-number" data-score="6">6</div>
+                            <div class="scale-number" data-score="7">7</div>
+                            <div class="scale-number" data-score="8">8</div>
+                            <div class="scale-number" data-score="9">9</div>
+                            <div class="scale-number" data-score="10">10</div>
+                        </div>
+                    </div>
+                    <div class="scale-labels">
+                        <span>全く勧めない</span>
+                        <span>非常に勧める</span>
+                    </div>
+                </div>
+
+                <!-- 今後の利用 -->
+                <div class="form-section">
+                    <h3>今後のご利用について</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="future1" name="future_use" value="definitely">
+                            <label for="future1">また利用したい</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="future2" name="future_use" value="consider">
+                            <label for="future2">条件が合えば利用を検討</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="future3" name="future_use" value="recommend">
+                            <label for="future3">他部署・関連会社に紹介したい</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 同意確認 -->
+                <div class="agreement-box">
+                    <div class="agreement-item">
+                        <input type="checkbox" id="agree1" required>
+                        <label for="agree1">
+                            いただいたフィードバックは、サービス改善の参考として使用させていただくことに同意します。
+                        </label>
+                    </div>
+                    <div class="agreement-item">
+                        <input type="checkbox" id="agree2">
+                        <label for="agree2">
+                            お客様の声として、匿名で事例紹介に使用することを許可します。（任意）
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ボタン -->
+                <div class="button-group">
+                    <a href="06_client_dashboard.html" class="btn btn-secondary">
+                        後で入力
+                    </a>
+                    <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitFeedback()">
+                        フィードバックを送信
+                    </button>
+                </div>
+            </div>
+
+            <!-- 完了メッセージ -->
+            <div id="thankYouMessage" class="thank-you-message">
+                <div class="success-icon">✅</div>
+                <h2>ありがとうございました！</h2>
+                <p>
+                    貴重なフィードバックをいただき、誠にありがとうございます。<br>
+                    お客様のご意見を参考に、より良いサービスの提供に努めてまいります。<br>
+                    今後ともゴミ人間レンタルサービスをよろしくお願いいたします。
+                </p>
+                <div class="button-group" style="margin-top: 40px;">
+                    <a href="06_client_dashboard.html" class="btn btn-primary">
+                        ダッシュボードに戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 星評価の処理
+        document.querySelectorAll('.star-rating').forEach(rating => {
+            const stars = rating.querySelectorAll('.star');
+            let selectedValue = 0;
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    selectedValue = index + 1;
+                    updateStars(stars, selectedValue);
+                });
+
+                star.addEventListener('mouseenter', () => {
+                    updateStars(stars, index + 1);
+                });
+            });
+
+            rating.addEventListener('mouseleave', () => {
+                updateStars(stars, selectedValue);
+            });
+        });
+
+        function updateStars(stars, value) {
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // 推奨度スケールの処理
+        let selectedScore = null;
+        document.querySelectorAll('.scale-number').forEach(number => {
+            number.addEventListener('click', () => {
+                document.querySelectorAll('.scale-number').forEach(n => {
+                    n.classList.remove('selected');
+                });
+                number.classList.add('selected');
+                selectedScore = number.dataset.score;
+            });
+        });
+
+        // 文字数カウント
+        document.querySelectorAll('textarea').forEach(textarea => {
+            const charCount = textarea.parentElement.querySelector('.char-count');
+            if (charCount) {
+                textarea.addEventListener('input', () => {
+                    const count = textarea.value.length;
+                    charCount.textContent = `${count} / 500文字`;
+                });
+            }
+        });
+
+        // フォーム送信
+        function submitFeedback() {
+            const agree1 = document.getElementById('agree1').checked;
+            
+            if (!agree1) {
+                alert('同意事項にチェックを入れてください。');
+                return;
+            }
+
+            // バリデーション（評価が全て入力されているか）
+            let allRated = true;
+            document.querySelectorAll('.star-rating').forEach(rating => {
+                const activeStars = rating.querySelectorAll('.star.active');
+                if (activeStars.length === 0) {
+                    allRated = false;
+                }
+            });
+
+            if (!allRated) {
+                alert('すべての評価項目に星をつけてください。');
+                return;
+            }
+
+            if (selectedScore === null) {
+                alert('推奨度を選択してください。');
+                return;
+            }
+
+            // フォームを非表示にして完了メッセージを表示
+            document.getElementById('feedbackForm').style.display = 'none';
+            document.getElementById('thankYouMessage').style.display = 'block';
+            
+            // ページトップへスクロール
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html> 

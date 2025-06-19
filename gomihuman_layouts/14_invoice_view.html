@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>請求書確認・支払 - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        /* 請求書コンテナ */
+        .invoice-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        /* 請求書ヘッダー */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .invoice-title h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .invoice-info {
+            text-align: right;
+        }
+        .invoice-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        .invoice-date {
+            color: #666;
+        }
+        /* ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status-badge.unpaid {
+            background-color: #f39c12;
+            color: white;
+        }
+        .status-badge.paid {
+            background-color: #27ae60;
+            color: white;
+        }
+        .status-badge.overdue {
+            background-color: #e74c3c;
+            color: white;
+        }
+        /* 宛先情報 */
+        .billing-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .info-box h3 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .info-box p {
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        /* 請求明細 */
+        .invoice-details {
+            margin-bottom: 40px;
+        }
+        .invoice-table {
+            width: 100%;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .invoice-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .invoice-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .invoice-table .text-right {
+            text-align: right;
+        }
+        .invoice-table .subtotal-row {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .invoice-table .total-row {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .invoice-table .total-row td {
+            padding: 20px 15px;
+        }
+        .grand-total {
+            color: #e74c3c;
+            font-size: 24px;
+        }
+        /* 支払情報 */
+        .payment-info {
+            background-color: #e8f4fd;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .payment-info h3 {
+            color: #0c5460;
+            margin-bottom: 20px;
+        }
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .payment-item {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .payment-item h4 {
+            color: #34495e;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .payment-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .bank-info {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+        /* 支払方法選択 */
+        .payment-methods {
+            margin: 30px 0;
+        }
+        .payment-methods h3 {
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .method-card {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .method-card:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+        .method-card.selected {
+            border-color: #3498db;
+            background-color: #e8f4fd;
+        }
+        .method-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .method-name {
+            font-weight: bold;
+            color: #34495e;
+        }
+        /* アクションボタン */
+        .action-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #ecf0f1;
+        }
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 10px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .btn-download {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-download:hover {
+            background-color: #229954;
+        }
+        /* 注意事項 */
+        .notice-box {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .notice-box h4 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        .notice-box ul {
+            list-style-position: inside;
+            color: #666;
+            font-size: 14px;
+        }
+        .notice-box li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">🗑️ ゴミ人間レンタル</div>
+            <div class="user-info">
+                <span>株式会社サンプル 様</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- パンくずリスト -->
+        <div class="breadcrumb">
+            <a href="06_client_dashboard.html">ダッシュボード</a> &gt; 請求書確認・支払
+        </div>
+
+        <!-- 請求書コンテナ -->
+        <div class="invoice-container">
+            <!-- 請求書ヘッダー -->
+            <div class="invoice-header">
+                <div class="invoice-title">
+                    <h1>請求書</h1>
+                    <span class="status-badge unpaid">未払い</span>
+                </div>
+                <div class="invoice-info">
+                    <div class="invoice-number">請求書番号: INV-2024-0156</div>
+                    <div class="invoice-date">発行日: 2024年3月20日</div>
+                    <div class="invoice-date">支払期限: 2024年4月19日</div>
+                </div>
+            </div>
+
+            <!-- 宛先情報 -->
+            <div class="billing-info">
+                <div class="info-box">
+                    <h3>ご請求先</h3>
+                    <p>
+                        株式会社サンプル<br>
+                        〒150-0001<br>
+                        東京都渋谷区神宮前1-2-3<br>
+                        サンプルビル 5F<br>
+                        TEL: 03-1234-5678
+                    </p>
+                </div>
+                <div class="info-box">
+                    <h3>サービス提供元</h3>
+                    <p>
+                        ゴミ人間レンタルサービス<br>
+                        〒160-0022<br>
+                        東京都新宿区新宿3-4-5<br>
+                        エコビル 3F<br>
+                        TEL: 03-9876-5432
+                    </p>
+                </div>
+            </div>
+
+            <!-- 請求明細 -->
+            <div class="invoice-details">
+                <h3 style="margin-bottom: 20px;">請求明細</h3>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">項目</th>
+                            <th style="width: 15%;">数量</th>
+                            <th style="width: 15%;">単価</th>
+                            <th style="width: 20%;" class="text-right">金額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                ゴミ人間レンタル基本料金<br>
+                                <small style="color: #666;">渋谷音楽祭2024（3/15-17）</small>
+                            </td>
+                            <td>6名×3日</td>
+                            <td>¥30,000</td>
+                            <td class="text-right">¥540,000</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                広告掲載料金<br>
+                                <small style="color: #666;">前面・背面広告スペース</small>
+                            </td>
+                            <td>6名×3日</td>
+                            <td>¥10,000</td>
+                            <td class="text-right">¥180,000</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                英語対応スタッフ追加料金<br>
+                                <small style="color: #666;">専門スタッフ1名配置</small>
+                            </td>
+                            <td>1名×3日</td>
+                            <td>¥5,000</td>
+                            <td class="text-right">¥15,000</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                SNSスポット設置費<br>
+                                <small style="color: #666;">撮影スポット設営・運営</small>
+                            </td>
+                            <td>一式</td>
+                            <td>¥50,000</td>
+                            <td class="text-right">¥50,000</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                リアルタイムレポート配信<br>
+                                <small style="color: #666;">活動状況即時配信サービス</small>
+                            </td>
+                            <td>3日間</td>
+                            <td>¥20,000</td>
+                            <td class="text-right">¥60,000</td>
+                        </tr>
+                        <tr class="subtotal-row">
+                            <td colspan="3">小計</td>
+                            <td class="text-right">¥845,000</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">消費税（10%）</td>
+                            <td class="text-right">¥84,500</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3">ご請求金額</td>
+                            <td class="text-right grand-total">¥929,500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 支払情報 -->
+            <div class="payment-info">
+                <h3>お支払い情報</h3>
+                <div class="payment-details">
+                    <div class="payment-item">
+                        <h4>🏦 銀行振込</h4>
+                        <p>下記口座へお振込みください。</p>
+                        <div class="bank-info">
+                            みずほ銀行 新宿支店<br>
+                            普通預金 1234567<br>
+                            ゴミニンゲンレンタル（カ
+                        </div>
+                        <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                            ※振込手数料はお客様負担となります
+                        </p>
+                    </div>
+                    <div class="payment-item">
+                        <h4>💳 クレジットカード</h4>
+                        <p>VISA、Mastercard、JCB、AMEX対応</p>
+                        <p style="margin-top: 10px;">オンライン決済で即時処理</p>
+                    </div>
+                    <div class="payment-item">
+                        <h4>📄 請求書払い</h4>
+                        <p>月末締め翌月末払い</p>
+                        <p style="margin-top: 10px;">※事前審査が必要です</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 支払方法選択 -->
+            <div class="payment-methods">
+                <h3>お支払い方法を選択してください</h3>
+                <div class="method-grid">
+                    <div class="method-card" onclick="selectPaymentMethod(this, 'bank')">
+                        <div class="method-icon">🏦</div>
+                        <div class="method-name">銀行振込</div>
+                    </div>
+                    <div class="method-card" onclick="selectPaymentMethod(this, 'credit')">
+                        <div class="method-icon">💳</div>
+                        <div class="method-name">クレジットカード</div>
+                    </div>
+                    <div class="method-card" onclick="selectPaymentMethod(this, 'invoice')">
+                        <div class="method-icon">📄</div>
+                        <div class="method-name">請求書払い</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 注意事項 -->
+            <div class="notice-box">
+                <h4>⚠️ ご注意事項</h4>
+                <ul>
+                    <li>支払期限を過ぎますと、延滞金（年率14.6%）が発生する場合があります。</li>
+                    <li>銀行振込の場合、入金確認まで1-2営業日かかる場合があります。</li>
+                    <li>領収書は入金確認後、メールにてPDFで送付いたします。</li>
+                    <li>ご不明な点がございましたら、経理部（03-9876-5432）までお問い合わせください。</li>
+                </ul>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="action-section">
+                <button class="btn btn-download" onclick="downloadInvoice()">
+                    📥 請求書PDFをダウンロード
+                </button>
+                <button class="btn btn-primary" onclick="proceedPayment()">
+                    支払い手続きへ進む
+                </button>
+                <a href="06_client_dashboard.html" class="btn btn-secondary">
+                    後で支払う
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMethod = null;
+
+        function selectPaymentMethod(element, method) {
+            // 既存の選択を解除
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 新しい選択を設定
+            element.classList.add('selected');
+            selectedMethod = method;
+        }
+
+        function downloadInvoice() {
+            alert('請求書PDFのダウンロードを開始します...');
+        }
+
+        function proceedPayment() {
+            if (!selectedMethod) {
+                alert('お支払い方法を選択してください。');
+                return;
+            }
+
+            switch(selectedMethod) {
+                case 'bank':
+                    alert('銀行振込の詳細情報をメールでお送りしました。');
+                    break;
+                case 'credit':
+                    alert('クレジットカード決済画面へ移動します...');
+                    // 実際にはクレジットカード決済画面へ遷移
+                    break;
+                case 'invoice':
+                    alert('請求書払いの申請を受け付けました。審査結果をお待ちください。');
+                    break;
+            }
+        }
+    </script>
+</body>
+</html> 

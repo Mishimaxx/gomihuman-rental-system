@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クライアントログイン - ゴミ人間レンタル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #2ecc71;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .input-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .error-msg.show {
+            display: block;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-login {
+            background-color: #3498db;
+            color: white;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            background-color: #2980b9;
+        }
+        .btn-login:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .remember-me input {
+            margin-right: 8px;
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .links a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #333;
+        }
+        .validation-rules {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        .validation-rules h4 {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .validation-rules ul {
+            list-style-position: inside;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- ロゴ -->
+        <div class="logo">
+            <h1>🗑️ ゴミ人間レンタル</h1>
+            <p>クライアント様ログイン</p>
+        </div>
+
+        <!-- ログインフォーム -->
+        <form id="loginForm" action="06_client_dashboard.html" method="POST" onsubmit="return validateForm()">
+            <!-- メールアドレス入力 -->
+            <div class="form-group">
+                <label for="email">メールアドレス <span style="color: red;">*</span></label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    placeholder="example@company.com"
+                    maxlength="100"
+                >
+                <p class="input-hint">※ご登録いただいた法人メールアドレス</p>
+                <p class="error-msg" id="email-error">正しいメールアドレスを入力してください</p>
+            </div>
+
+            <!-- パスワード入力 -->
+            <div class="form-group">
+                <label for="password">パスワード <span style="color: red;">*</span></label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    placeholder="パスワードを入力"
+                    minlength="8"
+                    maxlength="32"
+                >
+                <p class="input-hint">※8文字以上32文字以下</p>
+                <p class="error-msg" id="password-error">パスワードは8文字以上で入力してください</p>
+            </div>
+
+            <!-- ログイン状態を保持 -->
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">ログイン状態を保持する</label>
+            </div>
+
+            <!-- ログインボタン -->
+            <button type="submit" class="btn btn-login" id="loginBtn">
+                ログイン
+            </button>
+
+            <!-- エラーメッセージ（サーバーエラー） -->
+            <p class="error-msg" id="server-error" style="text-align: center; margin-top: 10px;">
+                ログインに失敗しました。メールアドレスまたはパスワードが正しくありません。
+            </p>
+        </form>
+
+        <!-- リンク -->
+        <div class="links">
+            <a href="password_reset.html">パスワードをお忘れの方</a>
+        </div>
+
+        <!-- 新規登録への導線 -->
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <p style="color: #666; margin-bottom: 10px;">アカウントをお持ちでない方</p>
+            <a href="05_register.html" style="color: #f39c12; text-decoration: none; font-weight: bold;">
+                新規会員登録はこちら
+            </a>
+        </div>
+
+        <!-- トップページへ戻る -->
+        <a href="01_top_page.html" class="back-link">
+            ← トップページへ戻る
+        </a>
+
+        <!-- 入力規則の説明 -->
+        <div class="validation-rules">
+            <h4>入力規則</h4>
+            <ul>
+                <li>メールアドレス：最大100文字、有効な形式</li>
+                <li>パスワード：8文字以上32文字以下</li>
+                <li>ログイン試行回数：5回まで（超過時は30分ロック）</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            let isValid = true;
+
+            // メールアドレスの検証
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                emailError.classList.add('show');
+                isValid = false;
+            } else {
+                emailError.classList.remove('show');
+            }
+
+            // パスワードの検証
+            if (password.value.length < 8) {
+                passwordError.classList.add('show');
+                isValid = false;
+            } else {
+                passwordError.classList.remove('show');
+            }
+
+            // 仮のログイン処理（実際はサーバー側で処理）
+            if (isValid) {
+                // デモ用：特定の値でログイン成功とする
+                if (email.value === 'demo@company.com' && password.value === 'password123') {
+                    return true;
+                } else {
+                    document.getElementById('server-error').classList.add('show');
+                    return false;
+                }
+            }
+
+            return isValid;
+        }
+
+        // リアルタイムバリデーション
+        document.getElementById('email').addEventListener('blur', function() {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailError = document.getElementById('email-error');
+            if (!emailRegex.test(this.value) && this.value !== '') {
+                emailError.classList.add('show');
+            } else {
+                emailError.classList.remove('show');
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const passwordError = document.getElementById('password-error');
+            if (this.value.length < 8 && this.value !== '') {
+                passwordError.classList.add('show');
+            } else {
+                passwordError.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html> 

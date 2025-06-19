@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゴミ人間レンタル - 画面一覧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #34495e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .screen-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .screen-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .screen-item:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .screen-item a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .screen-item a:hover {
+            color: #3498db;
+        }
+        .screen-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .client { border-left: 4px solid #3498db; }
+        .admin { border-left: 4px solid #e74c3c; }
+        .staff { border-left: 4px solid #9b59b6; }
+        .common { border-left: 4px solid #2ecc71; }
+        .login-info {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .login-info h3 {
+            color: #0c5460;
+            margin-bottom: 10px;
+        }
+        .login-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ ゴミ人間レンタル - 画面一覧</h1>
+
+        <!-- ログイン情報 -->
+        <div class="login-info">
+            <h3>📌 デモログイン情報</h3>
+            <p><strong>クライアント：</strong> メール: <code>demo@company.com</code> / パスワード: <code>password123</code></p>
+            <p><strong>管理者：</strong> ID: <code>admin001</code> / パスワード: <code>password1234</code> / 認証コード: <code>123456</code></p>
+            <p><strong>スタッフ：</strong> ID: <code>ST2024001</code> / パスワード: <code>staff123</code></p>
+        </div>
+
+        <!-- 共通画面 -->
+        <div class="section">
+            <h2>🌐 共通画面</h2>
+            <div class="screen-list">
+                <div class="screen-item common">
+                    <a href="01_top_page.html">01. トップページ</a>
+                    <p class="screen-desc">サービス概要とログイン導線</p>
+                </div>
+                <div class="screen-item common">
+                    <a href="05_register.html">05. 新規会員登録</a>
+                    <p class="screen-desc">法人・個人事業主の新規登録</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- クライアント画面 -->
+        <div class="section">
+            <h2>🏢 クライアント画面</h2>
+            <div class="screen-list">
+                <div class="screen-item client">
+                    <a href="02_client_login.html">02. クライアントログイン</a>
+                    <p class="screen-desc">メールアドレス/パスワードでログイン</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="06_client_dashboard.html">06. クライアントダッシュボード</a>
+                    <p class="screen-desc">機能メニューとステータス表示</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="07_service_request.html">07. サービス依頼作成</a>
+                    <p class="screen-desc">新規依頼の詳細入力フォーム</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="08_proposal_view.html">08. 企画・見積確認</a>
+                    <p class="screen-desc">提案内容の確認と承認</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="09_contract.html">09. 契約締結・素材提出</a>
+                    <p class="screen-desc">契約確認と広告素材アップロード</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="10_plan_view.html">10. 運営計画確認</a>
+                    <p class="screen-desc">巡回ルート・スケジュール確認</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="11_service_status.html">11. サービス実施状況</a>
+                    <p class="screen-desc">リアルタイム活動モニタリング</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="12_data_view.html">12. 収集データ閲覧</a>
+                    <p class="screen-desc">ゴミ回収量・啓発効果データ</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="13_report_view.html">13. 実施報告書閲覧</a>
+                    <p class="screen-desc">活動写真・詳細レポート</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="14_invoice_view.html">14. 請求書確認・支払</a>
+                    <p class="screen-desc">請求内容確認とオンライン決済</p>
+                </div>
+                <div class="screen-item client">
+                    <a href="15_feedback.html">15. フィードバック入力</a>
+                    <p class="screen-desc">サービス評価と改善提案</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理者画面 -->
+        <div class="section">
+            <h2>⚙️ 管理者画面</h2>
+            <div class="screen-list">
+                <div class="screen-item admin">
+                    <a href="03_admin_login.html">03. 管理者ログイン</a>
+                    <p class="screen-desc">管理者ID/パスワード/2FA認証</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="16_admin_dashboard.html">16. 管理者ダッシュボード</a>
+                    <p class="screen-desc">統計情報と管理メニュー</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="17_member_management.html">17. 会員情報管理</a>
+                    <p class="screen-desc">クライアント・スタッフ管理</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="18_request_list.html">18. サービス依頼一覧</a>
+                    <p class="screen-desc">全依頼のステータス管理</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="19_proposal_create.html">19. 企画・見積作成</a>
+                    <p class="screen-desc">企画立案と見積書作成</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="20_contract_management.html">20. 契約・素材管理</a>
+                    <p class="screen-desc">契約書と広告素材の管理</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="21_plan_create.html">21. 運営計画作成</a>
+                    <p class="screen-desc">巡回ルート・緊急時対応計画</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="22_staff_assign.html">22. スタッフ・資材手配</a>
+                    <p class="screen-desc">人員配置と資材管理</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="23_service_monitor.html">23. サービス実施モニタ</a>
+                    <p class="screen-desc">リアルタイム活動監視</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="24_data_analysis.html">24. データ集計・分析</a>
+                    <p class="screen-desc">各種KPIの分析</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="25_report_create.html">25. 実施報告書作成</a>
+                    <p class="screen-desc">クライアント向け報告書</p>
+                </div>
+                <div class="screen-item admin">
+                    <a href="26_invoice_issue.html">26. 請求書発行</a>
+                    <p class="screen-desc">請求書作成と入金管理</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- スタッフ画面 -->
+        <div class="section">
+            <h2>👤 スタッフ画面</h2>
+            <div class="screen-list">
+                <div class="screen-item staff">
+                    <a href="04_staff_login.html">04. スタッフログイン</a>
+                    <p class="screen-desc">スタッフID/パスワードでログイン</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="27_staff_dashboard.html">27. スタッフダッシュボード</a>
+                    <p class="screen-desc">本日の予定と活動メニュー</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="28_job_list.html">28. 作業指示一覧</a>
+                    <p class="screen-desc">担当作業の一覧表示</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="29_job_detail.html">29. 作業詳細閲覧</a>
+                    <p class="screen-desc">巡回ルート・注意事項確認</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="30_activity_record.html">30. 活動記録入力</a>
+                    <p class="screen-desc">写真・動画・交流記録</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="31_waste_process.html">31. ゴミ処理入力</a>
+                    <p class="screen-desc">回収ゴミの種類・量・分別記録</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="32_job_complete.html">32. 作業完了報告</a>
+                    <p class="screen-desc">活動時間と成果報告</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
