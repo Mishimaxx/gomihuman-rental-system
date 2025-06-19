@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>請求書発行 - ゴミ人間レンタル管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .back-btn {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #a93226;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-title {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-title h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        /* タブ */
+        .tabs {
+            background: white;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            border-bottom: 2px solid #e74c3c;
+        }
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            background-color: #f8f9fa;
+        }
+        .tab.active {
+            color: #e74c3c;
+            font-weight: bold;
+            border-bottom: 3px solid #e74c3c;
+            margin-bottom: -2px;
+        }
+        /* タブコンテンツ */
+        .tab-content {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        /* 請求書一覧 */
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .filter-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+        .filter-select,
+        .filter-input {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .filter-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .filter-btn:hover {
+            background-color: #2980b9;
+        }
+        /* 請求書テーブル */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-table th,
+        .invoice-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .invoice-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .invoice-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-draft {
+            background-color: #f39c12;
+            color: white;
+        }
+        .status-issued {
+            background-color: #3498db;
+            color: white;
+        }
+        .status-paid {
+            background-color: #27ae60;
+            color: white;
+        }
+        .status-overdue {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 2px;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .btn-view {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-send {
+            background-color: #27ae60;
+            color: white;
+        }
+        /* 新規発行フォーム */
+        .issue-form {
+            display: grid;
+            gap: 20px;
+        }
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        /* 請求項目 */
+        .item-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .item-table th,
+        .item-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .item-table th {
+            background-color: #e8e8e8;
+            font-weight: bold;
+        }
+        .item-table input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .item-table .quantity,
+        .item-table .price {
+            width: 100px;
+        }
+        .add-item-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        /* 合計表示 */
+        .total-section {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #3498db;
+        }
+        .total-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            max-width: 400px;
+            margin-left: auto;
+        }
+        .total-label {
+            text-align: right;
+            font-weight: bold;
+            color: #666;
+        }
+        .total-value {
+            text-align: right;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .grand-total {
+            font-size: 20px;
+            color: #e74c3c;
+            border-top: 2px solid #3498db;
+            padding-top: 10px;
+        }
+        /* アクションボタン */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #c0392b;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+        }
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+            }
+            .filter-section {
+                flex-direction: column;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .invoice-table {
+                font-size: 14px;
+            }
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">💰 請求書発行</div>
+            <div class="user-info">
+                <span>管理者: admin001</span>
+                <a href="16_admin_dashboard.html" class="back-btn">ダッシュボードに戻る</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- ページタイトル -->
+        <div class="page-title">
+            <h1>請求書発行・管理</h1>
+            <p>請求書の発行・送付・入金管理を行います</p>
+        </div>
+
+        <!-- タブ -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('list')">請求書一覧</button>
+            <button class="tab" onclick="switchTab('new')">新規発行</button>
+        </div>
+
+        <!-- タブコンテンツ -->
+        <div class="tab-content">
+            <!-- 請求書一覧タブ -->
+            <div id="list-panel" class="tab-panel active">
+                <!-- フィルター -->
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label class="filter-label">ステータス</label>
+                        <select class="filter-select">
+                            <option>すべて</option>
+                            <option>下書き</option>
+                            <option>発行済み</option>
+                            <option>入金済み</option>
+                            <option>期限超過</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">クライアント</label>
+                        <select class="filter-select">
+                            <option>すべて</option>
+                            <option>株式会社ABC商事</option>
+                            <option>XYZコーポレーション</option>
+                            <option>株式会社デジタルワークス</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">発行月</label>
+                        <input type="month" class="filter-input" value="2024-02">
+                    </div>
+                    <div class="filter-group">
+                        <button class="filter-btn">絞り込み</button>
+                    </div>
+                </div>
+
+                <!-- 請求書テーブル -->
+                <div class="table-container">
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>請求書番号</th>
+                                <th>発行日</th>
+                                <th>クライアント</th>
+                                <th>案件名</th>
+                                <th>金額</th>
+                                <th>支払期限</th>
+                                <th>ステータス</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>INV-2024-0058</td>
+                                <td>2024/02/28</td>
+                                <td>株式会社ABC商事</td>
+                                <td>渋谷エリア環境美化</td>
+                                <td>¥550,000</td>
+                                <td>2024/03/31</td>
+                                <td><span class="status-badge status-issued">発行済み</span></td>
+                                <td>
+                                    <button class="action-btn btn-view">閲覧</button>
+                                    <button class="action-btn btn-send">再送</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>INV-2024-0057</td>
+                                <td>2024/02/25</td>
+                                <td>XYZコーポレーション</td>
+                                <td>新宿駅周辺清掃</td>
+                                <td>¥420,000</td>
+                                <td>2024/03/25</td>
+                                <td><span class="status-badge status-paid">入金済み</span></td>
+                                <td>
+                                    <button class="action-btn btn-view">閲覧</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>INV-2024-0056</td>
+                                <td>2024/02/20</td>
+                                <td>株式会社デジタルワークス</td>
+                                <td>品川エリア美化活動</td>
+                                <td>¥380,000</td>
+                                <td>2024/03/20</td>
+                                <td><span class="status-badge status-issued">発行済み</span></td>
+                                <td>
+                                    <button class="action-btn btn-view">閲覧</button>
+                                    <button class="action-btn btn-send">再送</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>INV-2024-0055</td>
+                                <td>-</td>
+                                <td>株式会社ABC商事</td>
+                                <td>池袋駅周辺清掃</td>
+                                <td>¥480,000</td>
+                                <td>-</td>
+                                <td><span class="status-badge status-draft">下書き</span></td>
+                                <td>
+                                    <button class="action-btn btn-edit">編集</button>
+                                    <button class="action-btn btn-send">発行</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>INV-2024-0054</td>
+                                <td>2024/01/31</td>
+                                <td>XYZコーポレーション</td>
+                                <td>渋谷年末特別清掃</td>
+                                <td>¥650,000</td>
+                                <td>2024/02/28</td>
+                                <td><span class="status-badge status-overdue">期限超過</span></td>
+                                <td>
+                                    <button class="action-btn btn-view">閲覧</button>
+                                    <button class="action-btn btn-send">催促</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 新規発行タブ -->
+            <div id="new-panel" class="tab-panel">
+                <form class="issue-form">
+                    <!-- 基本情報 -->
+                    <div class="form-section">
+                        <h2 class="section-title">基本情報</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">クライアント</label>
+                                <select class="form-select" onchange="updateProjectList()">
+                                    <option>選択してください</option>
+                                    <option>株式会社ABC商事</option>
+                                    <option>XYZコーポレーション</option>
+                                    <option>株式会社デジタルワークス</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">案件名</label>
+                                <select class="form-select" id="projectSelect">
+                                    <option>クライアントを選択してください</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">請求書番号</label>
+                                <input type="text" class="form-input" value="INV-2024-0059" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">発行日</label>
+                                <input type="date" class="form-input" value="2024-03-01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">支払期限</label>
+                                <input type="date" class="form-input" value="2024-03-31">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">支払条件</label>
+                                <select class="form-select">
+                                    <option>月末締め翌月末払い</option>
+                                    <option>請求書発行後30日以内</option>
+                                    <option>即日払い</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 請求項目 -->
+                    <div class="form-section">
+                        <h2 class="section-title">請求項目</h2>
+                        <table class="item-table" id="itemTable">
+                            <thead>
+                                <tr>
+                                    <th>項目名</th>
+                                    <th>数量</th>
+                                    <th>単価</th>
+                                    <th>金額</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="text" value="基本サービス料金"></td>
+                                    <td><input type="number" class="quantity" value="1" onchange="calculateTotal()"></td>
+                                    <td><input type="number" class="price" value="300000" onchange="calculateTotal()"></td>
+                                    <td class="amount">¥300,000</td>
+                                    <td><button type="button" class="remove-btn" onclick="removeItem(this)">削除</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" value="スタッフ追加料金（3名分）"></td>
+                                    <td><input type="number" class="quantity" value="3" onchange="calculateTotal()"></td>
+                                    <td><input type="number" class="price" value="50000" onchange="calculateTotal()"></td>
+                                    <td class="amount">¥150,000</td>
+                                    <td><button type="button" class="remove-btn" onclick="removeItem(this)">削除</button></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" value="特別エリア対応費"></td>
+                                    <td><input type="number" class="quantity" value="1" onchange="calculateTotal()"></td>
+                                    <td><input type="number" class="price" value="100000" onchange="calculateTotal()"></td>
+                                    <td class="amount">¥100,000</td>
+                                    <td><button type="button" class="remove-btn" onclick="removeItem(this)">削除</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" class="add-item-btn" onclick="addItem()">+ 項目を追加</button>
+                    </div>
+
+                    <!-- 備考 -->
+                    <div class="form-section">
+                        <h2 class="section-title">備考</h2>
+                        <textarea class="form-textarea" placeholder="備考欄（任意）">振込手数料はご負担ください。</textarea>
+                    </div>
+
+                    <!-- 合計 -->
+                    <div class="total-section">
+                        <div class="total-grid">
+                            <div class="total-label">小計:</div>
+                            <div class="total-value" id="subtotal">¥550,000</div>
+                            <div class="total-label">消費税（10%）:</div>
+                            <div class="total-value" id="tax">¥55,000</div>
+                            <div class="total-label grand-total">合計金額:</div>
+                            <div class="total-value grand-total" id="grandTotal">¥605,000</div>
+                        </div>
+                    </div>
+
+                    <!-- アクションボタン -->
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="saveDraft()">下書き保存</button>
+                        <button type="button" class="btn btn-success" onclick="previewInvoice()">プレビュー</button>
+                        <button type="button" class="btn btn-primary" onclick="issueInvoice()">請求書発行</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // タブ切り替え
+        function switchTab(tabName) {
+            // タブボタンの切り替え
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // パネルの切り替え
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-panel`).classList.add('active');
+        }
+
+        // 案件リスト更新
+        function updateProjectList() {
+            const projectSelect = document.getElementById('projectSelect');
+            projectSelect.innerHTML = `
+                <option>渋谷エリア環境美化キャンペーン</option>
+                <option>新宿駅周辺清掃プロジェクト</option>
+                <option>池袋駅周辺定期清掃</option>
+            `;
+        }
+
+        // 請求項目追加
+        function addItem() {
+            const tbody = document.querySelector('#itemTable tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="項目名を入力"></td>
+                <td><input type="number" class="quantity" value="1" onchange="calculateTotal()"></td>
+                <td><input type="number" class="price" value="0" onchange="calculateTotal()"></td>
+                <td class="amount">¥0</td>
+                <td><button type="button" class="remove-btn" onclick="removeItem(this)">削除</button></td>
+            `;
+            tbody.appendChild(newRow);
+        }
+
+        // 請求項目削除
+        function removeItem(button) {
+            if (confirm('この項目を削除しますか？')) {
+                button.closest('tr').remove();
+                calculateTotal();
+            }
+        }
+
+        // 合計計算
+        function calculateTotal() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#itemTable tbody tr');
+            
+            rows.forEach(row => {
+                const quantity = parseInt(row.querySelector('.quantity').value) || 0;
+                const price = parseInt(row.querySelector('.price').value) || 0;
+                const amount = quantity * price;
+                row.querySelector('.amount').textContent = `¥${amount.toLocaleString()}`;
+                subtotal += amount;
+            });
+
+            const tax = Math.floor(subtotal * 0.1);
+            const grandTotal = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = `¥${subtotal.toLocaleString()}`;
+            document.getElementById('tax').textContent = `¥${tax.toLocaleString()}`;
+            document.getElementById('grandTotal').textContent = `¥${grandTotal.toLocaleString()}`;
+        }
+
+        // 下書き保存
+        function saveDraft() {
+            alert('請求書を下書き保存しました');
+        }
+
+        // プレビュー
+        function previewInvoice() {
+            alert('請求書のプレビューを表示します');
+            // 実際の実装では、別ウィンドウでPDFプレビューを表示
+        }
+
+        // 請求書発行
+        function issueInvoice() {
+            if (confirm('請求書を発行してクライアントに送付しますか？')) {
+                alert('請求書を発行し、クライアントにメール送信しました');
+                // 実際の実装では、PDFを生成してメール送信
+            }
+        }
+
+        // ページ読み込み時に合計を計算
+        window.addEventListener('load', () => {
+            calculateTotal();
+        });
+    </script>
+</body>
+</html>

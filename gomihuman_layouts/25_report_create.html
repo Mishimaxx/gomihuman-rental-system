@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>実施報告書作成 - ゴミ人間レンタル管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .back-btn {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #a93226;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-title {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-title h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        /* 案件選択 */
+        .project-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+        .form-select,
+        .form-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .select-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .select-btn:hover {
+            background-color: #2980b9;
+        }
+        /* プロジェクト情報 */
+        .project-info {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #3498db;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        /* 報告書作成フォーム */
+        .report-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e74c3c;
+        }
+        .form-row {
+            margin-bottom: 20px;
+        }
+        .textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        /* 実施データ */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .data-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        .data-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .data-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 5px 0;
+        }
+        .data-label {
+            font-size: 12px;
+            color: #666;
+        }
+        /* 写真アップロード */
+        .photo-upload {
+            margin-bottom: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #3498db;
+            background: #e8f4f8;
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .upload-text {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        /* アップロード済み写真 */
+        .uploaded-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .photo-item {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            border: 1px solid #ddd;
+        }
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .photo-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* チェックリスト */
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        .checklist-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .checklist-label {
+            flex: 1;
+            cursor: pointer;
+        }
+        /* アクションボタン */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #c0392b;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .btn-success {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+        }
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .selector-grid {
+                grid-template-columns: 1fr;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">📝 実施報告書作成</div>
+            <div class="user-info">
+                <span>管理者: admin001</span>
+                <a href="16_admin_dashboard.html" class="back-btn">ダッシュボードに戻る</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- ページタイトル -->
+        <div class="page-title">
+            <h1>実施報告書作成</h1>
+            <p>サービス実施の詳細報告書を作成します</p>
+        </div>
+
+        <!-- 案件選択 -->
+        <div class="project-selector">
+            <div class="selector-grid">
+                <div class="form-group">
+                    <label class="form-label">クライアント</label>
+                    <select class="form-select">
+                        <option>株式会社ABC商事</option>
+                        <option>XYZコーポレーション</option>
+                        <option>株式会社デジタルワークス</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">案件名</label>
+                    <select class="form-select">
+                        <option>渋谷エリア環境美化キャンペーン</option>
+                        <option>新宿駅周辺清掃プロジェクト</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">実施日</label>
+                    <input type="date" class="form-input" value="2024-02-28">
+                </div>
+                <div class="form-group">
+                    <button class="select-btn" onclick="loadProjectData()">案件データ読込</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- プロジェクト情報 -->
+        <div class="project-info" id="projectInfo" style="display: none;">
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">案件ID</span>
+                    <span class="info-value">REQ-2024-0215</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">実施期間</span>
+                    <span class="info-value">2024/02/28 09:00-17:00</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">実施エリア</span>
+                    <span class="info-value">渋谷駅周辺5エリア</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">参加スタッフ数</span>
+                    <span class="info-value">12名</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 報告書作成フォーム -->
+        <div class="report-form" id="reportForm" style="display: none;">
+            <!-- 実施結果サマリー -->
+            <h2 class="section-title">実施結果サマリー</h2>
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="data-icon">🗑️</div>
+                    <div class="data-value">285kg</div>
+                    <div class="data-label">総回収量</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">👁️</div>
+                    <div class="data-value">8,520</div>
+                    <div class="data-label">推定リーチ数</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">📸</div>
+                    <div class="data-value">156</div>
+                    <div class="data-label">SNS投稿数</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">⏱️</div>
+                    <div class="data-value">96h</div>
+                    <div class="data-label">総稼働時間</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">📍</div>
+                    <div class="data-value">5/5</div>
+                    <div class="data-label">完了エリア</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-icon">⚠️</div>
+                    <div class="data-value">0件</div>
+                    <div class="data-label">インシデント</div>
+                </div>
+            </div>
+
+            <!-- 実施概要 -->
+            <h2 class="section-title">実施概要</h2>
+            <div class="form-row">
+                <label class="form-label">実施内容の概要</label>
+                <textarea class="textarea" placeholder="実施内容の概要を入力してください">
+本日、渋谷駅周辺5エリアにて環境美化キャンペーンを実施しました。
+12名のスタッフが9:00から17:00まで活動し、計画通り全エリアの清掃を完了しました。
+天候にも恵まれ、多くの通行人の方々から好意的な反応をいただきました。</textarea>
+            </div>
+
+            <!-- 実施写真 -->
+            <h2 class="section-title">実施写真</h2>
+            <div class="photo-upload">
+                <div class="upload-area" onclick="document.getElementById('photoInput').click()">
+                    <div class="upload-icon">📷</div>
+                    <p class="upload-text">クリックまたはドラッグ&ドロップで写真をアップロード</p>
+                    <button class="upload-btn">写真を選択</button>
+                </div>
+                <input type="file" id="photoInput" multiple accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)">
+                
+                <div class="uploaded-photos" id="uploadedPhotos">
+                    <div class="photo-item">
+                        <img src="https://via.placeholder.com/150" alt="実施写真1">
+                        <button class="photo-remove" onclick="removePhoto(this)">×</button>
+                    </div>
+                    <div class="photo-item">
+                        <img src="https://via.placeholder.com/150" alt="実施写真2">
+                        <button class="photo-remove" onclick="removePhoto(this)">×</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 詳細報告 -->
+            <h2 class="section-title">詳細報告</h2>
+            <div class="form-row">
+                <label class="form-label">エリア別実施状況</label>
+                <textarea class="textarea" rows="6">
+【エリア1: 渋谷駅ハチ公口周辺】
+- 回収量: 62kg
+- 特記事項: 朝の通勤時間帯は人通りが多く、効率的な作業が困難だったため、昼過ぎに再度清掃を実施
+
+【エリア2: センター街入口】
+- 回収量: 58kg
+- 特記事項: 飲食店からの協力を得て、店舗前の清掃も実施</textarea>
+            </div>
+
+            <div class="form-row">
+                <label class="form-label">広告効果・反響</label>
+                <textarea class="textarea" rows="4">
+- 多数の通行人が広告に注目し、スマートフォンで撮影する姿が見られた
+- SNSでの投稿が156件確認され、ポジティブな反応が大半を占めた
+- 3件の問い合わせがクライアントに直接入った</textarea>
+            </div>
+
+            <!-- 改善提案 -->
+            <h2 class="section-title">改善提案・今後の課題</h2>
+            <div class="form-row">
+                <textarea class="textarea" rows="4">
+- 朝の通勤時間帯（7:00-9:00）は避け、10:00以降の開始が効率的
+- ゴミ袋の補充ポイントを2箇所増設することで、作業効率の向上が見込める
+- スタッフ用の休憩スペースの確保が必要</textarea>
+            </div>
+
+            <!-- 完了チェックリスト -->
+            <h2 class="section-title">完了チェックリスト</h2>
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1" checked>
+                    <label for="check1" class="checklist-label">全エリアの清掃完了</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2" checked>
+                    <label for="check2" class="checklist-label">回収ゴミの適切な処理</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3" checked>
+                    <label for="check3" class="checklist-label">スタッフの勤怠記録完了</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check4" checked>
+                    <label for="check4" class="checklist-label">実施写真の撮影・保存</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check5" checked>
+                    <label for="check5" class="checklist-label">クライアントへの速報連絡</label>
+                </div>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="saveDraft()">下書き保存</button>
+                <button class="btn btn-success" onclick="previewReport()">プレビュー</button>
+                <button class="btn btn-primary" onclick="submitReport()">報告書提出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 案件データ読込
+        function loadProjectData() {
+            document.getElementById('projectInfo').style.display = 'block';
+            document.getElementById('reportForm').style.display = 'block';
+            
+            // スクロール
+            document.getElementById('projectInfo').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 写真アップロード処理
+        function handlePhotoUpload(event) {
+            const files = event.target.files;
+            const uploadedPhotos = document.getElementById('uploadedPhotos');
+            
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const photoItem = document.createElement('div');
+                        photoItem.className = 'photo-item';
+                        photoItem.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}">
+                            <button class="photo-remove" onclick="removePhoto(this)">×</button>
+                        `;
+                        uploadedPhotos.appendChild(photoItem);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // 写真削除
+        function removePhoto(button) {
+            if (confirm('この写真を削除しますか？')) {
+                button.parentElement.remove();
+            }
+        }
+
+        // 下書き保存
+        function saveDraft() {
+            alert('報告書を下書き保存しました');
+        }
+
+        // プレビュー
+        function previewReport() {
+            alert('報告書のプレビューを表示します');
+            // 実際の実装では、別ウィンドウでプレビューを表示
+        }
+
+        // 報告書提出
+        function submitReport() {
+            // チェックリストの確認
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            if (!allChecked) {
+                alert('チェックリストの全項目を確認してください');
+                return;
+            }
+            
+            if (confirm('報告書を提出しますか？\n提出後は編集できません。')) {
+                alert('報告書を提出しました\nクライアントに通知されます');
+                // 実際の実装では、サーバーに送信してダッシュボードに遷移
+            }
+        }
+
+        // ドラッグ&ドロップ対応
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#3498db';
+            uploadArea.style.background = '#e8f4f8';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.background = '#f8f9fa';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ddd';
+            uploadArea.style.background = '#f8f9fa';
+            
+            const files = e.dataTransfer.files;
+            handlePhotoUpload({ target: { files } });
+        });
+    </script>
+</body>
+</html>

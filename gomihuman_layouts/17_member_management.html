@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会員情報管理 - ゴミ人間レンタル管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .back-btn {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #a93226;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-title {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-title h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        /* タブメニュー */
+        .tab-menu {
+            background: white;
+            padding: 0;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-button.active {
+            background-color: #f8f9fa;
+            border-bottom-color: #e74c3c;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .tab-button:hover {
+            background-color: #f8f9fa;
+        }
+        /* 検索エリア */
+        .search-area {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .search-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+        }
+        .search-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .search-btn:hover {
+            background-color: #c0392b;
+        }
+        .add-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .add-btn:hover {
+            background-color: #229954;
+        }
+        /* テーブル */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .edit-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #2980b9;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        /* ページネーション */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .page-btn:hover {
+            background-color: #f8f9fa;
+        }
+        .page-btn.active {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        /* モーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            position: relative;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        .close-btn {
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .close-btn:hover {
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .cancel-btn {
+            background-color: #95a5a6;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cancel-btn:hover {
+            background-color: #7f8c8d;
+        }
+        .save-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .save-btn:hover {
+            background-color: #229954;
+        }
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+            .search-input {
+                width: 100%;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">👥 会員情報管理</div>
+            <div class="user-info">
+                <span>管理者: admin001</span>
+                <a href="16_admin_dashboard.html" class="back-btn">ダッシュボードに戻る</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- ページタイトル -->
+        <div class="page-title">
+            <h1>会員情報管理</h1>
+            <p>クライアントとスタッフの登録情報を管理します</p>
+        </div>
+
+        <!-- タブメニュー -->
+        <div class="tab-menu">
+            <button class="tab-button active" onclick="switchTab('client')">クライアント管理</button>
+            <button class="tab-button" onclick="switchTab('staff')">スタッフ管理</button>
+        </div>
+
+        <!-- 検索エリア -->
+        <div class="search-area">
+            <div class="search-form">
+                <input type="text" class="search-input" placeholder="ID、名前、メールアドレスで検索">
+                <select class="search-select">
+                    <option value="">全てのステータス</option>
+                    <option value="active">有効</option>
+                    <option value="inactive">無効</option>
+                    <option value="pending">承認待ち</option>
+                </select>
+                <button class="search-btn">検索</button>
+                <button class="add-btn" onclick="openModal('add')">新規登録</button>
+            </div>
+        </div>
+
+        <!-- クライアントテーブル -->
+        <div id="client-table" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>会社名</th>
+                        <th>担当者名</th>
+                        <th>メールアドレス</th>
+                        <th>電話番号</th>
+                        <th>登録日</th>
+                        <th>ステータス</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>C001</td>
+                        <td>株式会社ABC商事</td>
+                        <td>田中太郎</td>
+                        <td>tanaka@abc.co.jp</td>
+                        <td>03-1234-5678</td>
+                        <td>2024/01/15</td>
+                        <td><span class="status-badge status-active">有効</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit-btn" onclick="openModal('edit')">編集</button>
+                                <button class="action-btn delete-btn" onclick="confirmDelete()">削除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>C002</td>
+                        <td>有限会社XYZ</td>
+                        <td>佐藤花子</td>
+                        <td>sato@xyz.co.jp</td>
+                        <td>03-9876-5432</td>
+                        <td>2024/01/20</td>
+                        <td><span class="status-badge status-active">有効</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit-btn" onclick="openModal('edit')">編集</button>
+                                <button class="action-btn delete-btn" onclick="confirmDelete()">削除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>C003</td>
+                        <td>株式会社グリーン</td>
+                        <td>鈴木一郎</td>
+                        <td>suzuki@green.jp</td>
+                        <td>03-5555-1234</td>
+                        <td>2024/02/01</td>
+                        <td><span class="status-badge status-pending">承認待ち</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit-btn" onclick="openModal('edit')">編集</button>
+                                <button class="action-btn delete-btn" onclick="confirmDelete()">削除</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- スタッフテーブル（非表示） -->
+        <div id="staff-table" class="table-container" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>氏名</th>
+                        <th>メールアドレス</th>
+                        <th>電話番号</th>
+                        <th>勤務エリア</th>
+                        <th>勤務状況</th>
+                        <th>評価</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>S001</td>
+                        <td>山田太郎</td>
+                        <td>yamada@gomihuman.jp</td>
+                        <td>090-1234-5678</td>
+                        <td>渋谷・新宿</td>
+                        <td><span class="status-badge status-active">稼働中</span></td>
+                        <td>⭐4.8</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit-btn" onclick="openModal('edit')">編集</button>
+                                <button class="action-btn delete-btn" onclick="confirmDelete()">削除</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>S002</td>
+                        <td>高橋花子</td>
+                        <td>takahashi@gomihuman.jp</td>
+                        <td>090-9876-5432</td>
+                        <td>池袋・上野</td>
+                        <td><span class="status-badge status-inactive">休暇中</span></td>
+                        <td>⭐4.5</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn edit-btn" onclick="openModal('edit')">編集</button>
+                                <button class="action-btn delete-btn" onclick="confirmDelete()">削除</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ページネーション -->
+        <div class="pagination">
+            <button class="page-btn">前へ</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">次へ</button>
+        </div>
+    </div>
+
+    <!-- モーダル -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">会員情報編集</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <form id="member-form">
+                <div class="form-group">
+                    <label class="form-label">会社名 / 氏名</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">担当者名（クライアントの場合）</label>
+                    <input type="text" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">メールアドレス</label>
+                    <input type="email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">電話番号</label>
+                    <input type="tel" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ステータス</label>
+                    <select class="form-select">
+                        <option value="active">有効</option>
+                        <option value="inactive">無効</option>
+                        <option value="pending">承認待ち</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">キャンセル</button>
+                    <button type="submit" class="save-btn">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // タブ切り替え
+        function switchTab(type) {
+            const clientTable = document.getElementById('client-table');
+            const staffTable = document.getElementById('staff-table');
+            const tabButtons = document.querySelectorAll('.tab-button');
+            
+            if (type === 'client') {
+                clientTable.style.display = 'block';
+                staffTable.style.display = 'none';
+                tabButtons[0].classList.add('active');
+                tabButtons[1].classList.remove('active');
+            } else {
+                clientTable.style.display = 'none';
+                staffTable.style.display = 'block';
+                tabButtons[0].classList.remove('active');
+                tabButtons[1].classList.add('active');
+            }
+        }
+
+        // モーダル操作
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            
+            if (type === 'add') {
+                modalTitle.textContent = '新規会員登録';
+            } else {
+                modalTitle.textContent = '会員情報編集';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (confirm('この会員情報を削除してもよろしいですか？')) {
+                alert('削除しました');
+            }
+        }
+
+        // フォーム送信
+        document.getElementById('member-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('保存しました');
+            closeModal();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データ集計・分析 - ゴミ人間レンタル管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f5f5f5;
+        }
+        /* ヘッダー */
+        header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .back-btn {
+            background-color: #c0392b;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .back-btn:hover {
+            background-color: #a93226;
+        }
+        /* メインコンテンツ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-title {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-title h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        /* 期間選択 */
+        .period-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .period-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .period-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .period-input {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .period-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .period-btn:hover {
+            background-color: #2980b9;
+        }
+        .export-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .export-btn:hover {
+            background-color: #229954;
+        }
+        /* サマリーカード */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .summary-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .summary-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        .summary-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .summary-change {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .change-up {
+            color: #27ae60;
+        }
+        .change-down {
+            color: #e74c3c;
+        }
+        /* グラフセクション */
+        .chart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .chart-options {
+            display: flex;
+            gap: 10px;
+        }
+        .chart-option-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .chart-option-btn:hover {
+            background-color: #f8f9fa;
+        }
+        .chart-option-btn.active {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        .chart-container {
+            height: 400px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 18px;
+        }
+        /* データテーブル */
+        .data-table-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+            position: sticky;
+            top: 0;
+        }
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .table-number {
+            text-align: right;
+        }
+        /* パフォーマンス指標 */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .kpi-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        .kpi-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .kpi-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .kpi-item:last-child {
+            border-bottom: none;
+        }
+        .kpi-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .kpi-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #27ae60;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .period-selector {
+                flex-direction: column;
+            }
+            .period-form {
+                width: 100%;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-options {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+        <div class="header-content">
+            <div class="logo">📊 データ集計・分析</div>
+            <div class="user-info">
+                <span>管理者: admin001</span>
+                <a href="16_admin_dashboard.html" class="back-btn">ダッシュボードに戻る</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <!-- ページタイトル -->
+        <div class="page-title">
+            <h1>データ集計・分析</h1>
+            <p>ゴミ回収量・広告効果・各種KPIを分析します</p>
+        </div>
+
+        <!-- 期間選択 -->
+        <div class="period-selector">
+            <div class="period-form">
+                <span class="period-label">分析期間:</span>
+                <input type="date" class="period-input" value="2024-02-01">
+                <span>〜</span>
+                <input type="date" class="period-input" value="2024-02-29">
+                <button class="period-btn" onclick="updateData()">更新</button>
+            </div>
+            <button class="export-btn" onclick="exportData()">📥 レポート出力</button>
+        </div>
+
+        <!-- サマリーカード -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-icon">🗑️</div>
+                <div class="summary-value">6,825kg</div>
+                <div class="summary-label">総回収量</div>
+                <div class="summary-change change-up">▲ 前月比 +15.3%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">👁️</div>
+                <div class="summary-value">125,400</div>
+                <div class="summary-label">広告リーチ数</div>
+                <div class="summary-change change-up">▲ 前月比 +22.7%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">💰</div>
+                <div class="summary-value">¥8.2M</div>
+                <div class="summary-label">月間売上</div>
+                <div class="summary-change change-up">▲ 前月比 +18.5%</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-icon">⭐</div>
+                <div class="summary-value">4.7</div>
+                <div class="summary-label">顧客満足度</div>
+                <div class="summary-change change-up">▲ 前月比 +0.2pt</div>
+            </div>
+        </div>
+
+        <!-- ゴミ回収量推移 -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">ゴミ回収量推移</h2>
+                <div class="chart-options">
+                    <button class="chart-option-btn active">日別</button>
+                    <button class="chart-option-btn">週別</button>
+                    <button class="chart-option-btn">月別</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                📊 回収量推移グラフ<br>
+                （Chart.jsで折れ線グラフを表示）
+            </div>
+        </div>
+
+        <!-- エリア別実績 -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">エリア別実績</h2>
+                <div class="chart-options">
+                    <button class="chart-option-btn active">回収量</button>
+                    <button class="chart-option-btn">広告効果</button>
+                    <button class="chart-option-btn">稼働時間</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                📊 エリア別実績グラフ<br>
+                （Chart.jsで棒グラフを表示）
+            </div>
+        </div>
+
+        <!-- パフォーマンス指標 -->
+        <div class="chart-section">
+            <h2 class="chart-title">パフォーマンス指標</h2>
+            <div class="kpi-grid">
+                <!-- 運営効率 -->
+                <div class="kpi-card">
+                    <h3 class="kpi-title">運営効率</h3>
+                    <div class="kpi-item">
+                        <span class="kpi-label">スタッフ稼働率</span>
+                        <span class="kpi-value">87.5%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 87.5%"></div>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">平均回収効率</span>
+                        <span class="kpi-value">45.2kg/人・日</span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">計画達成率</span>
+                        <span class="kpi-value">94.8%</span>
+                    </div>
+                </div>
+
+                <!-- 広告効果 -->
+                <div class="kpi-card">
+                    <h3 class="kpi-title">広告効果</h3>
+                    <div class="kpi-item">
+                        <span class="kpi-label">インプレッション数</span>
+                        <span class="kpi-value">456,200</span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">エンゲージメント率</span>
+                        <span class="kpi-value">3.8%</span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">ブランド認知度向上</span>
+                        <span class="kpi-value">+12.5%</span>
+                    </div>
+                </div>
+
+                <!-- 財務指標 -->
+                <div class="kpi-card">
+                    <h3 class="kpi-title">財務指標</h3>
+                    <div class="kpi-item">
+                        <span class="kpi-label">収益性</span>
+                        <span class="kpi-value">125%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%"></div>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">平均契約単価</span>
+                        <span class="kpi-value">¥680,000</span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">顧客獲得コスト</span>
+                        <span class="kpi-value">¥45,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 詳細データテーブル -->
+        <div class="data-table-section">
+            <div class="chart-header">
+                <h2 class="chart-title">日別詳細データ</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>稼働スタッフ数</th>
+                            <th>回収量(kg)</th>
+                            <th>実施エリア数</th>
+                            <th>広告リーチ数</th>
+                            <th>売上(円)</th>
+                            <th>効率性</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024/02/29</td>
+                            <td class="table-number">15</td>
+                            <td class="table-number">312</td>
+                            <td class="table-number">5</td>
+                            <td class="table-number">8,520</td>
+                            <td class="table-number">385,000</td>
+                            <td class="table-number">20.8kg/人</td>
+                        </tr>
+                        <tr>
+                            <td>2024/02/28</td>
+                            <td class="table-number">14</td>
+                            <td class="table-number">298</td>
+                            <td class="table-number">4</td>
+                            <td class="table-number">7,890</td>
+                            <td class="table-number">350,000</td>
+                            <td class="table-number">21.3kg/人</td>
+                        </tr>
+                        <tr>
+                            <td>2024/02/27</td>
+                            <td class="table-number">15</td>
+                            <td class="table-number">325</td>
+                            <td class="table-number">5</td>
+                            <td class="table-number">9,100</td>
+                            <td class="table-number">385,000</td>
+                            <td class="table-number">21.7kg/人</td>
+                        </tr>
+                        <tr>
+                            <td>2024/02/26</td>
+                            <td class="table-number">12</td>
+                            <td class="table-number">256</td>
+                            <td class="table-number">4</td>
+                            <td class="table-number">6,400</td>
+                            <td class="table-number">280,000</td>
+                            <td class="table-number">21.3kg/人</td>
+                        </tr>
+                        <tr>
+                            <td>2024/02/25</td>
+                            <td class="table-number">18</td>
+                            <td class="table-number">405</td>
+                            <td class="table-number">6</td>
+                            <td class="table-number">12,300</td>
+                            <td class="table-number">520,000</td>
+                            <td class="table-number">22.5kg/人</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // データ更新
+        function updateData() {
+            alert('指定期間のデータを更新しました');
+            // 実際の実装では、選択された期間に基づいてデータを再取得
+        }
+
+        // データエクスポート
+        function exportData() {
+            const format = prompt('出力形式を選択してください:\n1. PDF\n2. Excel\n3. CSV', '1');
+            if (format) {
+                const formatName = format === '1' ? 'PDF' : format === '2' ? 'Excel' : 'CSV';
+                alert(`${formatName}形式でレポートを出力しました`);
+            }
+        }
+
+        // チャートオプション切り替え
+        document.querySelectorAll('.chart-option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.chart-option-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 実際の実装では、選択されたオプションに基づいてチャートを更新
+                const chartTitle = this.closest('.chart-section').querySelector('.chart-title').textContent;
+                const option = this.textContent;
+                console.log(`${chartTitle}のチャートを${option}表示に切り替え`);
+            });
+        });
+
+        // ダミーデータでのグラフ更新シミュレーション
+        setInterval(() => {
+            // リアルタイムデータの更新をシミュレート
+            const summaryValues = document.querySelectorAll('.summary-value');
+            summaryValues.forEach(value => {
+                if (value.textContent.includes('kg')) {
+                    const current = parseInt(value.textContent.replace(/[^0-9]/g, ''));
+                    value.textContent = `${(current + Math.floor(Math.random() * 10)).toLocaleString()}kg`;
+                }
+            });
+        }, 30000); // 30秒ごとに更新
+    </script>
+</body>
+</html>
