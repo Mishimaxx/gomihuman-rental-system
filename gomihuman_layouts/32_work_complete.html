@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業完了報告 - ゴミ人間レンタル スタッフシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f3f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: #7e57c2;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .main-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #7e57c2;
+            text-align: center;
+        }
+        
+        .completion-icon {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .completion-icon i {
+            font-size: 5rem;
+            color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #7e57c2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background-color: #f5f3f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .summary-icon {
+            font-size: 2.5rem;
+            color: #7e57c2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-table th,
+        .detail-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .detail-table th {
+            background-color: #f5f3f9;
+            font-weight: 600;
+            color: #7e57c2;
+        }
+        
+        .detail-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .checklist {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background-color: #f5f3f9;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .checklist-item:hover {
+            background-color: #e8e0f5;
+        }
+        
+        .checklist-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        
+        .checklist-label {
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .checklist-item.checked {
+            background-color: #e8f5e9;
+        }
+        
+        .checklist-item.checked .checklist-label {
+            text-decoration: line-through;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #7e57c2;
+        }
+        
+        .signature-pad {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            position: relative;
+            height: 200px;
+            cursor: crosshair;
+        }
+        
+        .signature-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #999;
+            pointer-events: none;
+        }
+        
+        .signature-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-small {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-small:hover {
+            background-color: #f5f3f9;
+            border-color: #7e57c2;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        
+        .btn-primary:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: #9575cd;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7e57c2;
+        }
+        
+        .btn-outline {
+            background-color: white;
+            color: #7e57c2;
+            border: 1px solid #7e57c2;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f5f3f9;
+        }
+        
+        .warning-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #f57c00;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        
+        .warning-title {
+            font-weight: bold;
+            color: #f57c00;
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .signature-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>ゴミ人間レンタル - スタッフシステム</h1>
+            <div class="user-info">
+                <span><i class="fas fa-user-circle"></i> 田中太郎（ST2024001）</span>
+                <span><i class="fas fa-clock"></i> <span id="current-time"></span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="completion-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h2 class="page-title">作業完了報告</h2>
+
+        <!-- 作業サマリー -->
+        <section class="section">
+            <h3 class="section-title">
+                <i class="fas fa-chart-pie"></i> 本日の作業サマリー
+            </h3>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="summary-value">3時間55分</div>
+                    <div class="summary-label">活動時間</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <div class="summary-value">24.8 kg</div>
+                    <div class="summary-label">回収ゴミ総量</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <div class="summary-value">12.5 km</div>
+                    <div class="summary-label">巡回距離</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="summary-value">47 件</div>
+                    <div class="summary-label">対応件数</div>
+                </div>
+            </div>
+
+            <table class="detail-table">
+                <tr>
+                    <th>項目</th>
+                    <th>詳細</th>
+                </tr>
+                <tr>
+                    <td>作業ID</td>
+                    <td>W2024001</td>
+                </tr>
+                <tr>
+                    <td>実施日時</td>
+                    <td>2024年10月31日(木) 10:05 - 14:00</td>
+                </tr>
+                <tr>
+                    <td>実施場所</td>
+                    <td>渋谷駅周辺（ハロウィンイベント特別巡回）</td>
+                </tr>
+                <tr>
+                    <td>クライアント</td>
+                    <td>渋谷区商店街連合会</td>
+                </tr>
+                <tr>
+                    <td>ゴミ内訳</td>
+                    <td>可燃: 15.2kg / 不燃: 3.6kg / 資源: 5.8kg / その他: 0.2kg</td>
+                </tr>
+                <tr>
+                    <td>処理方法</td>
+                    <td>指定処理センターへ搬入（渋谷区清掃事務所）</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 完了確認チェックリスト -->
+        <section class="section">
+            <h3 class="section-title">
+                <i class="fas fa-clipboard-check"></i> 完了確認チェックリスト
+            </h3>
+            <div class="warning-box">
+                <div class="warning-title">確認事項</div>
+                <p>以下のすべての項目にチェックを入れてから、報告書を提出してください。</p>
+            </div>
+            <ul class="checklist">
+                <li class="checklist-item">
+                    <input type="checkbox" id="check1" class="checklist-checkbox" onchange="updateChecklist(this)">
+                    <label for="check1" class="checklist-label">すべての巡回ルートを完了した</label>
+                </li>
+                <li class="checklist-item">
+                    <input type="checkbox" id="check2" class="checklist-checkbox" onchange="updateChecklist(this)">
+                    <label for="check2" class="checklist-label">回収したゴミを適切に処理した</label>
+                </li>
+                <li class="checklist-item">
+                    <input type="checkbox" id="check3" class="checklist-checkbox" onchange="updateChecklist(this)">
+                    <label for="check3" class="checklist-label">備品をすべて返却した</label>
+                </li>
+                <li class="checklist-item">
+                    <input type="checkbox" id="check4" class="checklist-checkbox" onchange="updateChecklist(this)">
+                    <label for="check4" class="checklist-label">活動記録・ゴミ処理記録を正確に入力した</label>
+                </li>
+                <li class="checklist-item">
+                    <input type="checkbox" id="check5" class="checklist-checkbox" onchange="updateChecklist(this)">
+                    <label for="check5" class="checklist-label">トラブルや異常がある場合は報告した</label>
+                </li>
+            </ul>
+        </section>
+
+        <!-- 最終コメント -->
+        <section class="section">
+            <h3 class="section-title">
+                <i class="fas fa-comment-dots"></i> 最終コメント・申し送り事項
+            </h3>
+            <form id="completion-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">本日の総括</label>
+                    <textarea class="form-textarea" 
+                              placeholder="本日の作業全体を通しての感想や気づいた点を記入してください"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">次回への申し送り</label>
+                    <textarea class="form-textarea" 
+                              placeholder="次回の作業者への引き継ぎ事項があれば記入してください"></textarea>
+                </div>
+                
+                <!-- デジタル署名 -->
+                <div class="form-group">
+                    <label class="form-label">デジタル署名</label>
+                    <div class="signature-pad" id="signature-pad">
+                        <div class="signature-placeholder">ここに署名してください</div>
+                    </div>
+                    <div class="signature-actions">
+                        <button type="button" class="btn-small" onclick="clearSignature()">
+                            <i class="fas fa-eraser"></i> クリア
+                        </button>
+                        <button type="button" class="btn-small" onclick="undoSignature()">
+                            <i class="fas fa-undo"></i> 元に戻す
+                        </button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary" id="submit-btn" disabled>
+                        <i class="fas fa-paper-plane"></i> 作業完了報告を提出
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                        <i class="fas fa-save"></i> 下書き保存
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='27_staff_dashboard.html'">
+                        <i class="fas fa-home"></i> ダッシュボードへ
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // 現在時刻の表示
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // チェックリスト更新
+        function updateChecklist(checkbox) {
+            const item = checkbox.closest('.checklist-item');
+            if (checkbox.checked) {
+                item.classList.add('checked');
+            } else {
+                item.classList.remove('checked');
+            }
+            
+            // すべてチェックされたか確認
+            const allCheckboxes = document.querySelectorAll('.checklist-checkbox');
+            const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+            document.getElementById('submit-btn').disabled = !allChecked;
+        }
+
+        // 署名機能（簡易版）
+        let isDrawing = false;
+        const signaturePad = document.getElementById('signature-pad');
+        let hasSignature = false;
+
+        signaturePad.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            if (!hasSignature) {
+                signaturePad.querySelector('.signature-placeholder').style.display = 'none';
+                hasSignature = true;
+            }
+        });
+
+        signaturePad.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        signaturePad.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            // 実際の実装では、Canvas APIを使用して描画
+            console.log('Drawing at:', e.offsetX, e.offsetY);
+        });
+
+        function clearSignature() {
+            // 署名をクリア
+            hasSignature = false;
+            signaturePad.querySelector('.signature-placeholder').style.display = 'block';
+        }
+
+        function undoSignature() {
+            // 最後のストロークを取り消し
+            console.log('Undo last stroke');
+        }
+
+        // フォーム送信
+        function handleSubmit(event) {
+            event.preventDefault();
+            if (confirm('作業完了報告を提出します。よろしいですか？\n提出後は編集できません。')) {
+                alert('作業完了報告を提出しました。\nお疲れ様でした！');
+                location.href = '27_staff_dashboard.html';
+            }
+        }
+
+        // 下書き保存
+        function saveDraft() {
+            alert('下書きを保存しました。');
+        }
+    </script>
+</body>
+</html> 

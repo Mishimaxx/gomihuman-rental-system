@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業指示一覧 - ゴミ人間レンタル スタッフシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f3f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: #7e57c2;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #7e57c2;
+        }
+        
+        .tab-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            background-color: #f5f3f9;
+            border-bottom: 2px solid #7e57c2;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab-button:hover {
+            background-color: #e8e0f5;
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            color: #7e57c2;
+            font-weight: bold;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #7e57c2;
+        }
+        
+        .tab-content {
+            padding: 2rem;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        .work-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .work-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .work-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .work-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .work-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .work-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .status-new {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-in-progress {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-completed {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .work-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .work-description {
+            background-color: #f5f3f9;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        
+        .priority-high {
+            border-left: 4px solid #d32f2f;
+        }
+        
+        .priority-medium {
+            border-left: 4px solid #f57c00;
+        }
+        
+        .priority-low {
+            border-left: 4px solid #388e3c;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #9575cd;
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-select {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        .back-button {
+            background-color: #9575cd;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-top: 2rem;
+        }
+        
+        .back-button:hover {
+            background-color: #7e57c2;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .work-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>ゴミ人間レンタル - スタッフシステム</h1>
+            <div class="user-info">
+                <span><i class="fas fa-user-circle"></i> 田中太郎（ST2024001）</span>
+                <span><i class="fas fa-clock"></i> <span id="current-time"></span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h2 class="page-title"><i class="fas fa-clipboard-list"></i> 作業指示一覧</h2>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="showTab('today')">
+                    <i class="fas fa-calendar-day"></i> 本日の作業
+                </button>
+                <button class="tab-button" onclick="showTab('week')">
+                    <i class="fas fa-calendar-week"></i> 今週の予定
+                </button>
+                <button class="tab-button" onclick="showTab('history')">
+                    <i class="fas fa-history"></i> 過去の作業
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <!-- 本日の作業 -->
+                <div id="today" class="tab-panel active">
+                    <div class="filter-section">
+                        <div class="filter-group">
+                            <label for="priority-filter">優先度：</label>
+                            <select id="priority-filter" class="filter-select">
+                                <option value="">すべて</option>
+                                <option value="high">高</option>
+                                <option value="medium">中</option>
+                                <option value="low">低</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="status-filter">ステータス：</label>
+                            <select id="status-filter" class="filter-select">
+                                <option value="">すべて</option>
+                                <option value="new">未着手</option>
+                                <option value="in-progress">実施中</option>
+                                <option value="completed">完了</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="work-list">
+                        <div class="work-card priority-high" onclick="viewWorkDetail('W2024001')">
+                            <div class="work-header">
+                                <h3 class="work-title">渋谷ハロウィンイベント - エリアA巡回</h3>
+                                <span class="work-status status-new">未着手</span>
+                            </div>
+                            <div class="work-info">
+                                <div class="info-item">
+                                    <span class="info-label">作業ID</span>
+                                    <span class="info-value">W2024001</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">時間</span>
+                                    <span class="info-value">10:00 - 14:00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">場所</span>
+                                    <span class="info-value">渋谷駅周辺</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">優先度</span>
+                                    <span class="info-value" style="color: #d32f2f;">高</span>
+                                </div>
+                            </div>
+                            <div class="work-description">
+                                <strong>概要：</strong>ハロウィンイベント期間中の特別巡回。人流が多いため、安全に配慮しながら活動してください。
+                            </div>
+                        </div>
+
+                        <div class="work-card priority-medium" onclick="viewWorkDetail('W2024002')">
+                            <div class="work-header">
+                                <h3 class="work-title">新宿御苑周辺 定期巡回</h3>
+                                <span class="work-status status-in-progress">実施中</span>
+                            </div>
+                            <div class="work-info">
+                                <div class="info-item">
+                                    <span class="info-label">作業ID</span>
+                                    <span class="info-value">W2024002</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">時間</span>
+                                    <span class="info-value">15:00 - 18:00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">場所</span>
+                                    <span class="info-value">新宿御苑周辺</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">優先度</span>
+                                    <span class="info-value" style="color: #f57c00;">中</span>
+                                </div>
+                            </div>
+                            <div class="work-description">
+                                <strong>概要：</strong>通常の定期巡回。観光客への対応も含みます。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 今週の予定 -->
+                <div id="week" class="tab-panel">
+                    <div class="work-list">
+                        <div class="work-card priority-high" onclick="viewWorkDetail('W2024003')">
+                            <div class="work-header">
+                                <h3 class="work-title">【11/2(土)】渋谷ハロウィンイベント - 最終日特別体制</h3>
+                                <span class="work-status status-new">未着手</span>
+                            </div>
+                            <div class="work-info">
+                                <div class="info-item">
+                                    <span class="info-label">作業ID</span>
+                                    <span class="info-value">W2024003</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">日時</span>
+                                    <span class="info-value">11/2(土) 18:00 - 24:00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">場所</span>
+                                    <span class="info-value">渋谷センター街</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">優先度</span>
+                                    <span class="info-value" style="color: #d32f2f;">高</span>
+                                </div>
+                            </div>
+                            <div class="work-description">
+                                <strong>概要：</strong>ハロウィン最終日の深夜対応。複数スタッフでの連携作業。
+                            </div>
+                        </div>
+
+                        <div class="work-card priority-low" onclick="viewWorkDetail('W2024004')">
+                            <div class="work-header">
+                                <h3 class="work-title">【11/3(日)】代々木公園 週末巡回</h3>
+                                <span class="work-status status-new">未着手</span>
+                            </div>
+                            <div class="work-info">
+                                <div class="info-item">
+                                    <span class="info-label">作業ID</span>
+                                    <span class="info-value">W2024004</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">日時</span>
+                                    <span class="info-value">11/3(日) 10:00 - 16:00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">場所</span>
+                                    <span class="info-value">代々木公園</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">優先度</span>
+                                    <span class="info-value" style="color: #388e3c;">低</span>
+                                </div>
+                            </div>
+                            <div class="work-description">
+                                <strong>概要：</strong>週末の公園巡回。ファミリー層への啓発活動を中心に。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 過去の作業 -->
+                <div id="history" class="tab-panel">
+                    <div class="work-list">
+                        <div class="work-card priority-medium" onclick="viewWorkDetail('W2024000')">
+                            <div class="work-header">
+                                <h3 class="work-title">【10/30】原宿竹下通り 定期巡回</h3>
+                                <span class="work-status status-completed">完了</span>
+                            </div>
+                            <div class="work-info">
+                                <div class="info-item">
+                                    <span class="info-label">作業ID</span>
+                                    <span class="info-value">W2024000</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">実施日時</span>
+                                    <span class="info-value">10/30 14:00 - 17:00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">場所</span>
+                                    <span class="info-value">原宿竹下通り</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">回収量</span>
+                                    <span class="info-value">15.2kg</span>
+                                </div>
+                            </div>
+                            <div class="work-description">
+                                <strong>実施内容：</strong>通常巡回を完了。外国人観光客への対応3件、ゴミ箱設置店舗への協力依頼2件実施。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="back-button" onclick="location.href='27_staff_dashboard.html'">
+            <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+        </button>
+    </main>
+
+    <script>
+        // タブ切り替え
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-panel');
+            const buttons = document.querySelectorAll('.tab-button');
+            
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.closest('.tab-button').classList.add('active');
+        }
+
+        // 作業詳細画面へ遷移
+        function viewWorkDetail(workId) {
+            location.href = `29_work_detail.html?id=${workId}`;
+        }
+
+        // 現在時刻の表示
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // フィルター機能（デモ用）
+        document.getElementById('priority-filter').addEventListener('change', function() {
+            console.log('優先度フィルター:', this.value);
+        });
+
+        document.getElementById('status-filter').addEventListener('change', function() {
+            console.log('ステータスフィルター:', this.value);
+        });
+    </script>
+</body>
+</html> 

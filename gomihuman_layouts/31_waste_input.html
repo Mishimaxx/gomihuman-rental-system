@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゴミ処理入力 - ゴミ人間レンタル スタッフシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f3f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: #7e57c2;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #7e57c2;
+        }
+        
+        .work-info-bar {
+            background-color: #e8e0f5;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .work-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .work-info-label {
+            font-weight: bold;
+            color: #7e57c2;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #7e57c2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e8e0f5;
+            padding-bottom: 0.5rem;
+        }
+        
+        .waste-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .waste-type-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .waste-type-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .waste-type-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .waste-type-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .icon-burnable {
+            background-color: #ffe0b2;
+            color: #f57c00;
+        }
+        
+        .icon-non-burnable {
+            background-color: #e0f2f1;
+            color: #00796b;
+        }
+        
+        .icon-recyclable {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .icon-hazardous {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .waste-type-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        .required {
+            color: #d32f2f;
+            margin-left: 0.25rem;
+        }
+        
+        .weight-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #7e57c2;
+        }
+        
+        .unit {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .total-summary {
+            background-color: #f5f3f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .summary-title {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #7e57c2;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            border-top: 2px solid #7e57c2;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .disposal-method {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .radio-input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .form-textarea {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: #7e57c2;
+        }
+        
+        .stats-card {
+            background-color: #f5f3f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-icon {
+            font-size: 2.5rem;
+            color: #7e57c2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stats-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #7e57c2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6a4ca5;
+        }
+        
+        .btn-secondary {
+            background-color: #9575cd;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7e57c2;
+        }
+        
+        .btn-outline {
+            background-color: white;
+            color: #7e57c2;
+            border: 1px solid #7e57c2;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f5f3f9;
+        }
+        
+        .help-text {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .work-info-bar {
+                flex-direction: column;
+                align-items: start;
+            }
+            
+            .waste-type-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>ゴミ人間レンタル - スタッフシステム</h1>
+            <div class="user-info">
+                <span><i class="fas fa-user-circle"></i> 田中太郎（ST2024001）</span>
+                <span><i class="fas fa-clock"></i> <span id="current-time"></span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h2 class="page-title"><i class="fas fa-trash"></i> ゴミ処理入力</h2>
+
+        <div class="work-info-bar">
+            <div class="work-info-item">
+                <span class="work-info-label">作業ID:</span>
+                <span>W2024001</span>
+            </div>
+            <div class="work-info-item">
+                <span class="work-info-label">場所:</span>
+                <span>渋谷駅周辺</span>
+            </div>
+            <div class="work-info-item">
+                <span class="work-info-label">日時:</span>
+                <span>2024年10月31日 10:00-14:00</span>
+            </div>
+            <div class="work-info-item">
+                <span class="work-info-label">活動時間:</span>
+                <span>3時間45分</span>
+            </div>
+        </div>
+
+        <form onsubmit="handleSubmit(event)">
+            <div class="content-grid">
+                <div class="main-content">
+                    <!-- ゴミ種別入力 -->
+                    <section class="section">
+                        <h3 class="section-title">
+                            <i class="fas fa-list-alt"></i> ゴミ種別・重量入力
+                        </h3>
+                        <div class="waste-type-grid">
+                            <!-- 可燃ゴミ -->
+                            <div class="waste-type-card">
+                                <div class="waste-type-header">
+                                    <div class="waste-type-icon icon-burnable">
+                                        <i class="fas fa-fire"></i>
+                                    </div>
+                                    <div class="waste-type-name">可燃ゴミ</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">重量<span class="required">*</span></label>
+                                    <div class="weight-input-group">
+                                        <input type="number" class="form-input" id="burnable-weight" 
+                                               step="0.1" min="0" placeholder="0.0" required
+                                               onchange="updateTotal()">
+                                        <span class="unit">kg</span>
+                                    </div>
+                                    <span class="help-text">紙くず、食品包装、タバコの吸い殻など</span>
+                                </div>
+                            </div>
+
+                            <!-- 不燃ゴミ -->
+                            <div class="waste-type-card">
+                                <div class="waste-type-header">
+                                    <div class="waste-type-icon icon-non-burnable">
+                                        <i class="fas fa-ban"></i>
+                                    </div>
+                                    <div class="waste-type-name">不燃ゴミ</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">重量<span class="required">*</span></label>
+                                    <div class="weight-input-group">
+                                        <input type="number" class="form-input" id="non-burnable-weight" 
+                                               step="0.1" min="0" placeholder="0.0" required
+                                               onchange="updateTotal()">
+                                        <span class="unit">kg</span>
+                                    </div>
+                                    <span class="help-text">金属、ガラス、陶器など</span>
+                                </div>
+                            </div>
+
+                            <!-- 資源ゴミ -->
+                            <div class="waste-type-card">
+                                <div class="waste-type-header">
+                                    <div class="waste-type-icon icon-recyclable">
+                                        <i class="fas fa-recycle"></i>
+                                    </div>
+                                    <div class="waste-type-name">資源ゴミ</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">重量<span class="required">*</span></label>
+                                    <div class="weight-input-group">
+                                        <input type="number" class="form-input" id="recyclable-weight" 
+                                               step="0.1" min="0" placeholder="0.0" required
+                                               onchange="updateTotal()">
+                                        <span class="unit">kg</span>
+                                    </div>
+                                    <span class="help-text">ペットボトル、缶、ビン</span>
+                                </div>
+                            </div>
+
+                            <!-- 危険物 -->
+                            <div class="waste-type-card">
+                                <div class="waste-type-header">
+                                    <div class="waste-type-icon icon-hazardous">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="waste-type-name">危険物・その他</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">重量</label>
+                                    <div class="weight-input-group">
+                                        <input type="number" class="form-input" id="hazardous-weight" 
+                                               step="0.1" min="0" placeholder="0.0"
+                                               onchange="updateTotal()">
+                                        <span class="unit">kg</span>
+                                    </div>
+                                    <span class="help-text">電池、ライター、スプレー缶など</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="total-summary">
+                            <div class="summary-title">回収量サマリー</div>
+                            <div class="summary-item">
+                                <span>可燃ゴミ</span>
+                                <span id="summary-burnable">0.0 kg</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>不燃ゴミ</span>
+                                <span id="summary-non-burnable">0.0 kg</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>資源ゴミ</span>
+                                <span id="summary-recyclable">0.0 kg</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>危険物・その他</span>
+                                <span id="summary-hazardous">0.0 kg</span>
+                            </div>
+                            <div class="summary-item summary-total">
+                                <span>合計</span>
+                                <span id="summary-total">0.0 kg</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 処理方法 -->
+                    <section class="section">
+                        <h3 class="section-title">
+                            <i class="fas fa-truck"></i> 処理方法
+                        </h3>
+                        <div class="disposal-method">
+                            <label class="radio-group">
+                                <input type="radio" name="disposal" value="center" class="radio-input" checked>
+                                <span>指定処理センターへ搬入</span>
+                            </label>
+                            <label class="radio-group">
+                                <input type="radio" name="disposal" value="station" class="radio-input">
+                                <span>最寄りゴミステーションへ廃棄</span>
+                            </label>
+                            <label class="radio-group">
+                                <input type="radio" name="disposal" value="office" class="radio-input">
+                                <span>事務所へ持ち帰り</span>
+                            </label>
+                            <label class="radio-group">
+                                <input type="radio" name="disposal" value="other" class="radio-input">
+                                <span>その他</span>
+                            </label>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label">処理場所詳細</label>
+                            <input type="text" class="form-input" placeholder="例：渋谷区清掃事務所">
+                        </div>
+                    </section>
+
+                    <!-- 特記事項 -->
+                    <section class="section">
+                        <h3 class="section-title">
+                            <i class="fas fa-comment-alt"></i> 特記事項
+                        </h3>
+                        <div class="form-group">
+                            <label class="form-label">異常なゴミの発見</label>
+                            <textarea class="form-textarea" 
+                                      placeholder="通常と異なるゴミや大量廃棄などがあれば記入してください"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">その他メモ</label>
+                            <textarea class="form-textarea" 
+                                      placeholder="処理に関する補足事項があれば記入してください"></textarea>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="side-content">
+                    <!-- 本日の実績 -->
+                    <section class="section">
+                        <h3 class="section-title">
+                            <i class="fas fa-chart-line"></i> 本日の実績
+                        </h3>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                            <div class="stats-value" id="today-total">0.0</div>
+                            <div class="stats-label">kg</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-walking"></i>
+                            </div>
+                            <div class="stats-value">12.5</div>
+                            <div class="stats-label">km 巡回</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stats-value">47</div>
+                            <div class="stats-label">人と交流</div>
+                        </div>
+                    </section>
+
+                    <!-- 過去の記録 -->
+                    <section class="section">
+                        <h3 class="section-title">
+                            <i class="fas fa-history"></i> 過去の平均
+                        </h3>
+                        <div style="padding: 1rem;">
+                            <div class="summary-item">
+                                <span>前回の回収量</span>
+                                <span>18.7 kg</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>月平均</span>
+                                <span>15.3 kg</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>最高記録</span>
+                                <span>32.1 kg</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存して次へ
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="saveDraft()">
+                    <i class="fas fa-file-alt"></i> 下書き保存
+                </button>
+                <button type="button" class="btn btn-outline" onclick="location.href='30_activity_record.html'">
+                    <i class="fas fa-arrow-left"></i> 活動記録に戻る
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // 現在時刻の表示
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // 合計重量の更新
+        function updateTotal() {
+            const burnable = parseFloat(document.getElementById('burnable-weight').value) || 0;
+            const nonBurnable = parseFloat(document.getElementById('non-burnable-weight').value) || 0;
+            const recyclable = parseFloat(document.getElementById('recyclable-weight').value) || 0;
+            const hazardous = parseFloat(document.getElementById('hazardous-weight').value) || 0;
+            
+            const total = burnable + nonBurnable + recyclable + hazardous;
+            
+            // サマリー更新
+            document.getElementById('summary-burnable').textContent = burnable.toFixed(1) + ' kg';
+            document.getElementById('summary-non-burnable').textContent = nonBurnable.toFixed(1) + ' kg';
+            document.getElementById('summary-recyclable').textContent = recyclable.toFixed(1) + ' kg';
+            document.getElementById('summary-hazardous').textContent = hazardous.toFixed(1) + ' kg';
+            document.getElementById('summary-total').textContent = total.toFixed(1) + ' kg';
+            
+            // 本日の実績更新
+            document.getElementById('today-total').textContent = total.toFixed(1);
+        }
+
+        // フォーム送信処理
+        function handleSubmit(event) {
+            event.preventDefault();
+            if (confirm('ゴミ処理情報を保存して、作業完了報告へ進みますか？')) {
+                location.href = '32_work_complete.html';
+            }
+        }
+
+        // 下書き保存
+        function saveDraft() {
+            alert('下書きを保存しました。');
+        }
+    </script>
+</body>
+</html> 
