@@ -239,11 +239,11 @@
                     <p class="screen-desc">本日の予定と活動メニュー</p>
                 </div>
                 <div class="screen-item staff">
-                    <a href="28_job_list.html">28. 作業指示一覧</a>
+                    <a href="28_work_instructions.html">28. 作業指示一覧</a>
                     <p class="screen-desc">担当作業の一覧表示</p>
                 </div>
                 <div class="screen-item staff">
-                    <a href="29_job_detail.html">29. 作業詳細閲覧</a>
+                    <a href="29_work_detail.html">29. 作業詳細閲覧</a>
                     <p class="screen-desc">巡回ルート・注意事項確認</p>
                 </div>
                 <div class="screen-item staff">
@@ -251,13 +251,99 @@
                     <p class="screen-desc">写真・動画・交流記録</p>
                 </div>
                 <div class="screen-item staff">
-                    <a href="31_waste_process.html">31. ゴミ処理入力</a>
+                    <a href="31_waste_input.html">31. ゴミ処理入力</a>
                     <p class="screen-desc">回収ゴミの種類・量・分別記録</p>
                 </div>
                 <div class="screen-item staff">
-                    <a href="32_job_complete.html">32. 作業完了報告</a>
+                    <a href="32_work_complete.html">32. 作業完了報告</a>
                     <p class="screen-desc">活動時間と成果報告</p>
                 </div>
+                <div class="screen-item staff">
+                    <a href="33_attendance.html">33. 勤怠管理</a>
+                    <p class="screen-desc">出退勤記録・シフト管理</p>
+                </div>
+            </div>
+            
+            <!-- スタッフ用クイックアクション画面 -->
+            <h3 style="margin-top: 20px; margin-bottom: 15px; color: #9b59b6;">⚡ クイックアクション画面</h3>
+            <div class="screen-list">
+                <div class="screen-item staff">
+                    <a href="activity_start.html">34. 活動開始</a>
+                    <p class="screen-desc">出勤確認・準備チェックリスト</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="emergency_contact.html">35. 緊急連絡</a>
+                    <p class="screen-desc">緊急時の連絡先・状況報告</p>
+                </div>
+                <div class="screen-item staff">
+                    <a href="manual.html">36. マニュアル確認</a>
+                    <p class="screen-desc">作業マニュアル・FAQ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 画面遷移の説明 -->
+        <div class="section" style="background-color: #fff9c4; border: 2px solid #f9a825;">
+            <h2 style="color: #f57c00;">📍 画面遷移ガイド</h2>
+            <div style="margin-top: 20px;">
+                <h3 style="color: #2ecc71; margin-bottom: 10px;">🌐 共通画面の流れ</h3>
+                <p style="margin-bottom: 15px;">
+                    <strong>01. トップページ</strong> → 各ロールのログイン画面（02/03/04）または新規登録（05）へ遷移<br>
+                    <strong>05. 新規会員登録</strong> → 登録完了後、02. クライアントログインへ遷移
+                </p>
+
+                <h3 style="color: #3498db; margin-bottom: 10px;">🏢 クライアント画面の流れ</h3>
+                <p style="margin-bottom: 15px;">
+                    <strong>02. クライアントログイン</strong> → ログイン成功後、06. クライアントダッシュボードへ遷移<br>
+                    <strong>06. クライアントダッシュボード</strong> → 各機能画面（07〜15）へのハブとして機能<br>
+                    　├ <strong>07. サービス依頼作成</strong> → 依頼送信後、06へ戻る<br>
+                    　├ <strong>08. 企画・見積確認</strong> → 承認後、09. 契約締結へ遷移<br>
+                    　├ <strong>09. 契約締結・素材提出</strong> → 完了後、10. 運営計画確認へ遷移<br>
+                    　├ <strong>10. 運営計画確認</strong> → 確認後、11. サービス実施状況へ遷移可能<br>
+                    　├ <strong>11. サービス実施状況</strong> → リアルタイム監視画面（自動更新）<br>
+                    　├ <strong>12. 収集データ閲覧</strong> → データ確認後、13. 実施報告書へ遷移可能<br>
+                    　├ <strong>13. 実施報告書閲覧</strong> → 報告書確認後、14. 請求書確認へ遷移可能<br>
+                    　├ <strong>14. 請求書確認・支払</strong> → 支払完了後、15. フィードバックへ遷移<br>
+                    　└ <strong>15. フィードバック入力</strong> → 送信後、06へ戻る
+                </p>
+
+                <h3 style="color: #e74c3c; margin-bottom: 10px;">⚙️ 管理者画面の流れ</h3>
+                <p style="margin-bottom: 15px;">
+                    <strong>03. 管理者ログイン</strong> → 2FA認証後、16. 管理者ダッシュボードへ遷移<br>
+                    <strong>16. 管理者ダッシュボード</strong> → 各管理機能（17〜26）へのハブとして機能<br>
+                    　├ <strong>17. 会員情報管理</strong> → 会員の追加/編集/削除後、16へ戻る<br>
+                    　├ <strong>18. サービス依頼一覧</strong> → 依頼選択後、19. 企画・見積作成へ遷移<br>
+                    　├ <strong>19. 企画・見積作成</strong> → 作成後、18へ戻るか20へ遷移<br>
+                    　├ <strong>20. 契約・素材管理</strong> → 確認後、21. 運営計画作成へ遷移<br>
+                    　├ <strong>21. 運営計画作成</strong> → 作成後、22. スタッフ・資材手配へ遷移<br>
+                    　├ <strong>22. スタッフ・資材手配</strong> → 手配完了後、23. サービス実施モニタへ遷移<br>
+                    　├ <strong>23. サービス実施モニタ</strong> → 監視中、24. データ集計へ遷移可能<br>
+                    　├ <strong>24. データ集計・分析</strong> → 分析後、25. 実施報告書作成へ遷移<br>
+                    　├ <strong>25. 実施報告書作成</strong> → 作成後、26. 請求書発行へ遷移<br>
+                    　└ <strong>26. 請求書発行</strong> → 発行後、16へ戻る
+                </p>
+
+                <h3 style="color: #9b59b6; margin-bottom: 10px;">👤 スタッフ画面の流れ</h3>
+                <p style="margin-bottom: 15px;">
+                    <strong>04. スタッフログイン</strong> → ログイン成功後、27. スタッフダッシュボードへ遷移<br>
+                    <strong>27. スタッフダッシュボード</strong> → 各作業機能（28〜33）へのハブとして機能<br>
+                    　├ <strong>28. 作業指示一覧</strong> → 作業選択後、29. 作業詳細閲覧へ遷移<br>
+                    　├ <strong>29. 作業詳細閲覧</strong> → 確認後、30. 活動記録入力へ遷移<br>
+                    　├ <strong>30. 活動記録入力</strong> → 記録後、31. ゴミ処理入力へ遷移<br>
+                    　├ <strong>31. ゴミ処理入力</strong> → 入力後、32. 作業完了報告へ遷移<br>
+                    　├ <strong>32. 作業完了報告</strong> → 報告完了後、27へ戻る<br>
+                    　├ <strong>33. 勤怠管理</strong> → 出退勤記録後、27へ戻る<br>
+                    　│<br>
+                    　├─ <strong>⚡ クイックアクション（27から直接アクセス可能）</strong><br>
+                    　　├ <strong>34. 活動開始</strong> → 準備チェック完了後、29. 作業詳細へ遷移<br>
+                    　　├ <strong>35. 緊急連絡</strong> → 緊急時の連絡・報告（どの画面からもアクセス可）<br>
+                    　　└ <strong>36. マニュアル確認</strong> → 必要な情報を確認後、元の画面へ戻る
+                </p>
+
+                <p style="margin-top: 20px; padding: 10px; background-color: #e3f2fd; border-radius: 5px;">
+                    <strong>💡 ヒント：</strong>各画面の番号は、システム全体の処理フローを表しています。<br>
+                    基本的に番号順に進むことで、サービスの一連の流れを完了できます。
+                </p>
             </div>
         </div>
     </div>

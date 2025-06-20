@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マニュアル確認 - ゴミ人間レンタル スタッフシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f3f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: #7e57c2;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #7e57c2;
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #7e57c2;
+        }
+        
+        .search-button {
+            background-color: #7e57c2;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-button:hover {
+            background-color: #6a4ca5;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .category-list {
+            list-style: none;
+        }
+        
+        .category-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .category-link:hover {
+            background-color: #f5f3f9;
+            color: #7e57c2;
+        }
+        
+        .category-link.active {
+            background-color: #7e57c2;
+            color: white;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #7e57c2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .manual-section {
+            margin-bottom: 3rem;
+        }
+        
+        .manual-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #e8e0f5;
+            padding-bottom: 0.5rem;
+        }
+        
+        .manual-section p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        
+        .manual-section ul,
+        .manual-section ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .manual-section li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .important-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .important-box strong {
+            color: #856404;
+        }
+        
+        .warning-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .warning-box strong {
+            color: #721c24;
+        }
+        
+        .faq-section {
+            margin-top: 2rem;
+        }
+        
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            background-color: #f5f3f9;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        
+        .faq-question:hover {
+            background-color: #e8e0f5;
+        }
+        
+        .faq-question.active {
+            background-color: #7e57c2;
+            color: white;
+        }
+        
+        .faq-answer {
+            padding: 1rem;
+            display: none;
+            background-color: white;
+        }
+        
+        .faq-answer.show {
+            display: block;
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-outline {
+            background-color: white;
+            color: #7e57c2;
+            border: 1px solid #7e57c2;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f5f3f9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>ゴミ人間レンタル - スタッフシステム</h1>
+            <div class="user-info">
+                <span><i class="fas fa-user-circle"></i> 田中太郎（ST2024001）</span>
+                <span><i class="fas fa-clock"></i> <span id="header-time"></span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h2 class="page-title"><i class="fas fa-book"></i> マニュアル確認</h2>
+
+        <!-- 検索セクション -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="キーワードで検索（例：ゴミ分別、緊急時対応）" id="search-input">
+                <button class="search-button" onclick="searchManual()">
+                    <i class="fas fa-search"></i> 検索
+                </button>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- サイドバー -->
+            <aside class="sidebar">
+                <h3 style="margin-bottom: 1rem;">カテゴリ</h3>
+                <ul class="category-list">
+                    <li class="category-item">
+                        <a href="#basic" class="category-link active" onclick="showCategory('basic', this)">
+                            <i class="fas fa-book-open"></i> 基本マニュアル
+                        </a>
+                    </li>
+                    <li class="category-item">
+                        <a href="#operation" class="category-link" onclick="showCategory('operation', this)">
+                            <i class="fas fa-walking"></i> 活動マニュアル
+                        </a>
+                    </li>
+                    <li class="category-item">
+                        <a href="#waste" class="category-link" onclick="showCategory('waste', this)">
+                            <i class="fas fa-recycle"></i> ゴミ処理マニュアル
+                        </a>
+                    </li>
+                    <li class="category-item">
+                        <a href="#communication" class="category-link" onclick="showCategory('communication', this)">
+                            <i class="fas fa-comments"></i> 接客マニュアル
+                        </a>
+                    </li>
+                    <li class="category-item">
+                        <a href="#emergency" class="category-link" onclick="showCategory('emergency', this)">
+                            <i class="fas fa-exclamation-triangle"></i> 緊急時対応
+                        </a>
+                    </li>
+                    <li class="category-item">
+                        <a href="#faq" class="category-link" onclick="showCategory('faq', this)">
+                            <i class="fas fa-question-circle"></i> よくある質問
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- メインコンテンツ -->
+            <div class="content-section">
+                <!-- 基本マニュアル -->
+                <div id="basic" class="manual-content">
+                    <h2 class="section-title">
+                        <i class="fas fa-book-open"></i> 基本マニュアル
+                    </h2>
+                    
+                    <div class="manual-section">
+                        <h3>1. ゴミ人間レンタルサービスとは</h3>
+                        <p>ゴミ人間レンタルは、ゴミ箱を背負ったスタッフが街を巡回し、環境美化と企業広告を両立させる革新的なサービスです。</p>
+                        
+                        <div class="important-box">
+                            <strong>重要：</strong>私たちは単なる清掃員ではなく、環境美化の啓発者であり、企業の広告塔です。
+                        </div>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>2. 基本的な心構え</h3>
+                        <ul>
+                            <li>常に笑顔で明るく対応する</li>
+                            <li>清潔感のある身だしなみを心がける</li>
+                            <li>安全第一で行動する</li>
+                            <li>企業イメージを意識した行動をとる</li>
+                            <li>環境保護の意識を持って活動する</li>
+                        </ul>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>3. 勤務時の服装・装備</h3>
+                        <ol>
+                            <li>指定のユニフォームを着用</li>
+                            <li>スタッフ証を必ず携帯</li>
+                            <li>背負い型ゴミ箱を正しく装着</li>
+                            <li>軍手・トングを携帯</li>
+                            <li>無線機を常に携帯</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- 活動マニュアル -->
+                <div id="operation" class="manual-content" style="display: none;">
+                    <h2 class="section-title">
+                        <i class="fas fa-walking"></i> 活動マニュアル
+                    </h2>
+                    
+                    <div class="manual-section">
+                        <h3>1. 活動開始前の準備</h3>
+                        <ol>
+                            <li>体調確認（体温測定・健康チェック）</li>
+                            <li>装備品の点検</li>
+                            <li>巡回ルートの確認</li>
+                            <li>緊急連絡先の確認</li>
+                            <li>天候・イベント情報の確認</li>
+                        </ol>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>2. 巡回時の注意事項</h3>
+                        <ul>
+                            <li>指定されたルートを守る</li>
+                            <li>歩行者の邪魔にならないよう配慮</li>
+                            <li>定期的に本部へ状況報告</li>
+                            <li>休憩は指定場所で取る</li>
+                            <li>私語は控えめに</li>
+                        </ul>
+                        
+                        <div class="warning-box">
+                            <strong>警告：</strong>無断でルートを変更したり、持ち場を離れることは禁止です。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ゴミ処理マニュアル -->
+                <div id="waste" class="manual-content" style="display: none;">
+                    <h2 class="section-title">
+                        <i class="fas fa-recycle"></i> ゴミ処理マニュアル
+                    </h2>
+                    
+                    <div class="manual-section">
+                        <h3>1. ゴミの分別方法</h3>
+                        <ul>
+                            <li><strong>可燃ゴミ：</strong>紙くず、食品包装、タバコの吸い殻など</li>
+                            <li><strong>不燃ゴミ：</strong>金属、ガラス、陶器など</li>
+                            <li><strong>資源ゴミ：</strong>ペットボトル、缶、ビン</li>
+                            <li><strong>危険物：</strong>電池、ライター、スプレー缶（別途処理）</li>
+                        </ul>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>2. ゴミ袋の交換手順</h3>
+                        <ol>
+                            <li>ゴミ袋が8割程度になったら交換準備</li>
+                            <li>安全な場所で作業を行う</li>
+                            <li>新しい袋を装着してから古い袋を外す</li>
+                            <li>回収したゴミは指定場所へ運搬</li>
+                            <li>交換時刻と量を記録</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- 接客マニュアル -->
+                <div id="communication" class="manual-content" style="display: none;">
+                    <h2 class="section-title">
+                        <i class="fas fa-comments"></i> 接客マニュアル
+                    </h2>
+                    
+                    <div class="manual-section">
+                        <h3>1. 基本的な接客用語</h3>
+                        <ul>
+                            <li>「こんにちは！ゴミ人間です」（明るく元気に）</li>
+                            <li>「ゴミはこちらへどうぞ」（笑顔で案内）</li>
+                            <li>「ありがとうございます」（感謝を込めて）</li>
+                            <li>「環境美化にご協力ください」（丁寧に）</li>
+                        </ul>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>2. 外国人観光客への対応</h3>
+                        <p>簡単な英語とジェスチャーで対応します。</p>
+                        <ul>
+                            <li>"Hello! Trash here please"</li>
+                            <li>"Thank you for your cooperation"</li>
+                            <li>笑顔とボディランゲージを活用</li>
+                            <li>困ったら本部に連絡</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 緊急時対応 -->
+                <div id="emergency" class="manual-content" style="display: none;">
+                    <h2 class="section-title">
+                        <i class="fas fa-exclamation-triangle"></i> 緊急時対応マニュアル
+                    </h2>
+                    
+                    <div class="manual-section">
+                        <h3>1. 体調不良時の対応</h3>
+                        <ol>
+                            <li>無理をせず、安全な場所へ移動</li>
+                            <li>本部へ即座に連絡</li>
+                            <li>必要に応じて救急車を要請</li>
+                            <li>交代要員の到着を待つ</li>
+                        </ol>
+                        
+                        <div class="warning-box">
+                            <strong>重要：</strong>体調に異変を感じたら、無理をせずすぐに報告してください。
+                        </div>
+                    </div>
+
+                    <div class="manual-section">
+                        <h3>2. トラブル発生時の対応</h3>
+                        <ul>
+                            <li>冷静に状況を把握</li>
+                            <li>安全確保を最優先</li>
+                            <li>本部へ詳細を報告</li>
+                            <li>指示があるまで現場待機</li>
+                            <li>必要に応じて警察へ通報</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- よくある質問 -->
+                <div id="faq" class="manual-content" style="display: none;">
+                    <h2 class="section-title">
+                        <i class="fas fa-question-circle"></i> よくある質問
+                    </h2>
+                    
+                    <div class="faq-section">
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Q. 雨天時の活動はどうなりますか？</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>小雨程度であれば、レインコートを着用して活動を継続します。大雨・暴風雨の場合は、安全を考慮して活動を中止することがあります。判断は本部が行いますので、指示に従ってください。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Q. ゴミ箱が満杯になったらどうすればいいですか？</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>ゴミ箱が8割程度になったら、指定の集積場所へ移動してゴミ袋を交換してください。交換作業は安全な場所で行い、交換時刻と回収量を必ず記録してください。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Q. 危険物を発見した場合の対処法は？</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>刃物、注射器、薬品などの危険物を発見した場合は、絶対に素手で触らないでください。即座に本部へ連絡し、指示を仰いでください。必要に応じて警察への通報も行います。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Q. 写真撮影を求められたらどう対応しますか？</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>基本的に写真撮影には笑顔で応じてください。ただし、活動の妨げになる場合や、不適切な撮影を求められた場合は、丁寧にお断りしてください。企業の広告効果も考慮し、ポジティブな印象を与えるよう心がけましょう。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="27_staff_dashboard.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // 現在時刻の表示
+        function updateTime() {
+            const now = new Date();
+            const headerTimeString = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('header-time').textContent = headerTimeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // カテゴリ切り替え
+        function showCategory(categoryId, linkElement) {
+            // すべてのコンテンツを非表示
+            document.querySelectorAll('.manual-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // すべてのリンクから active クラスを削除
+            document.querySelectorAll('.category-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 選択されたコンテンツを表示
+            document.getElementById(categoryId).style.display = 'block';
+            
+            // 選択されたリンクに active クラスを追加
+            linkElement.classList.add('active');
+        }
+
+        // FAQ トグル
+        function toggleFAQ(questionElement) {
+            const answer = questionElement.nextElementSibling;
+            const icon = questionElement.querySelector('i');
+            
+            if (answer.classList.contains('show')) {
+                answer.classList.remove('show');
+                questionElement.classList.remove('active');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                answer.classList.add('show');
+                questionElement.classList.add('active');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+
+        // 検索機能（簡易版）
+        function searchManual() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            if (searchTerm) {
+                alert(`"${searchTerm}" に関する検索結果を表示します。\n（実際の実装では、マニュアル内を検索して該当箇所をハイライト表示します）`);
+            }
+        }
+
+        // Enterキーで検索
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchManual();
+            }
+        });
+    </script>
+</body>
+</html> 

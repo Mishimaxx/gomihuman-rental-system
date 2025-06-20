@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勤怠管理 - ゴミ人間レンタル スタッフシステム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f3f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: #7e57c2;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #7e57c2;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #7e57c2;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e8e0f5;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 出退勤ボタン */
+        .attendance-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .attendance-btn {
+            flex: 1;
+            padding: 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-clock-in {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .btn-clock-in:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+        
+        .btn-clock-out {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .btn-clock-out:hover:not(:disabled) {
+            background-color: #da190b;
+        }
+        
+        .attendance-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .attendance-btn i {
+            font-size: 3rem;
+        }
+        
+        .current-time {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* 本日の勤務状況 */
+        .today-status {
+            background-color: #f5f3f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .status-label {
+            color: #666;
+        }
+        
+        .status-value {
+            font-weight: bold;
+        }
+        
+        /* カレンダー */
+        .calendar-container {
+            overflow-x: auto;
+        }
+        
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .calendar th,
+        .calendar td {
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .calendar th {
+            background-color: #7e57c2;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .calendar td {
+            height: 80px;
+            vertical-align: top;
+            position: relative;
+        }
+        
+        .calendar-date {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .calendar-shift {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.25rem;
+        }
+        
+        .shift-morning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .shift-afternoon {
+            background-color: #cfe2ff;
+            color: #084298;
+        }
+        
+        .shift-night {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .calendar .today {
+            background-color: #e8e0f5;
+        }
+        
+        .calendar .holiday {
+            color: #f44336;
+        }
+        
+        .calendar .saturday {
+            color: #2196f3;
+        }
+        
+        /* シフト申請 */
+        .shift-request-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #7e57c2;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        /* 勤怠履歴 */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .history-table th {
+            background-color: #f5f3f9;
+            font-weight: 600;
+            color: #7e57c2;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f5f3f9;
+        }
+        
+        /* 統計情報 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background-color: #f5f3f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #7e57c2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.875rem;
+        }
+        
+        /* ボタン */
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #7e57c2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #6a4ca5;
+        }
+        
+        .btn-secondary {
+            background-color: #9575cd;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7e57c2;
+        }
+        
+        .btn-outline {
+            background-color: white;
+            color: #7e57c2;
+            border: 1px solid #7e57c2;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f5f3f9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .attendance-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>ゴミ人間レンタル - スタッフシステム</h1>
+            <div class="user-info">
+                <span><i class="fas fa-user-circle"></i> 田中太郎（ST2024001）</span>
+                <span><i class="fas fa-clock"></i> <span id="header-time"></span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h2 class="page-title"><i class="fas fa-clock"></i> 勤怠管理</h2>
+
+        <div class="content-grid">
+            <!-- 左側：出退勤・統計 -->
+            <div>
+                <!-- 出退勤セクション -->
+                <section class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user-clock"></i> 出退勤
+                    </h3>
+                    
+                    <div class="current-time" id="current-time"></div>
+                    
+                    <div class="attendance-buttons">
+                        <button class="attendance-btn btn-clock-in" onclick="clockIn()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>出勤</span>
+                        </button>
+                        <button class="attendance-btn btn-clock-out" onclick="clockOut()" disabled>
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>退勤</span>
+                        </button>
+                    </div>
+                    
+                    <div class="today-status">
+                        <h4 style="margin-bottom: 1rem; color: #7e57c2;">本日の勤務状況</h4>
+                        <div class="status-item">
+                            <span class="status-label">出勤時刻</span>
+                            <span class="status-value" id="clock-in-time">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">退勤時刻</span>
+                            <span class="status-value" id="clock-out-time">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">勤務時間</span>
+                            <span class="status-value" id="work-hours">-</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">休憩時間</span>
+                            <span class="status-value">1時間00分</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 月間統計 -->
+                <section class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-chart-bar"></i> 今月の勤怠統計
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">18</div>
+                            <div class="stat-label">出勤日数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">142.5</div>
+                            <div class="stat-label">総勤務時間</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">残業時間</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">遅刻・早退</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- シフト申請 -->
+                <section class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-calendar-plus"></i> シフト申請
+                    </h3>
+                    <form class="shift-request-form" onsubmit="submitShiftRequest(event)">
+                        <div class="form-group">
+                            <label class="form-label">申請タイプ</label>
+                            <select class="form-select" required>
+                                <option value="">選択してください</option>
+                                <option value="shift">シフト希望</option>
+                                <option value="leave">休暇申請</option>
+                                <option value="change">シフト変更</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">対象日</label>
+                            <input type="date" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">理由・備考</label>
+                            <textarea class="form-textarea" placeholder="申請理由を入力してください"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> 申請する
+                        </button>
+                    </form>
+                </section>
+            </div>
+
+            <!-- 右側：カレンダー・履歴 -->
+            <div>
+                <!-- シフトカレンダー -->
+                <section class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-calendar-alt"></i> シフトカレンダー
+                    </h3>
+                    <div class="calendar-container">
+                        <table class="calendar">
+                            <thead>
+                                <tr>
+                                    <th>日</th>
+                                    <th>月</th>
+                                    <th>火</th>
+                                    <th>水</th>
+                                    <th>木</th>
+                                    <th>金</th>
+                                    <th>土</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="holiday">
+                                        <div class="calendar-date">29</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">30</div>
+                                        <div class="calendar-shift shift-morning">10:00-14:00</div>
+                                    </td>
+                                    <td class="today">
+                                        <div class="calendar-date">31</div>
+                                        <div class="calendar-shift shift-afternoon">14:00-18:00</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">1</div>
+                                        <div class="calendar-shift shift-morning">10:00-14:00</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">2</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">3</div>
+                                        <div class="calendar-shift shift-night">18:00-22:00</div>
+                                    </td>
+                                    <td class="saturday">
+                                        <div class="calendar-date">4</div>
+                                        <div class="calendar-shift shift-afternoon">14:00-18:00</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="holiday">
+                                        <div class="calendar-date">5</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">6</div>
+                                        <div class="calendar-shift shift-morning">10:00-14:00</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">7</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">8</div>
+                                        <div class="calendar-shift shift-afternoon">14:00-18:00</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">9</div>
+                                        <div class="calendar-shift shift-morning">10:00-14:00</div>
+                                    </td>
+                                    <td>
+                                        <div class="calendar-date">10</div>
+                                    </td>
+                                    <td class="saturday">
+                                        <div class="calendar-date">11</div>
+                                        <div class="calendar-shift shift-afternoon">14:00-18:00</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 勤怠履歴 -->
+                <section class="section">
+                    <h3 class="section-title">
+                        <i class="fas fa-history"></i> 勤怠履歴
+                    </h3>
+                    <div style="overflow-x: auto;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>日付</th>
+                                    <th>出勤</th>
+                                    <th>退勤</th>
+                                    <th>勤務時間</th>
+                                    <th>状態</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>10/30(月)</td>
+                                    <td>09:55</td>
+                                    <td>14:05</td>
+                                    <td>4時間10分</td>
+                                    <td><span style="color: #4caf50;">正常</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10/29(日)</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td><span style="color: #666;">休日</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10/28(土)</td>
+                                    <td>13:50</td>
+                                    <td>18:10</td>
+                                    <td>4時間20分</td>
+                                    <td><span style="color: #4caf50;">正常</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10/27(金)</td>
+                                    <td>17:58</td>
+                                    <td>22:05</td>
+                                    <td>4時間07分</td>
+                                    <td><span style="color: #4caf50;">正常</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10/26(木)</td>
+                                    <td>10:05</td>
+                                    <td>14:00</td>
+                                    <td>3時間55分</td>
+                                    <td><span style="color: #f57c00;">遅刻</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-outline" onclick="location.href='27_staff_dashboard.html'">
+                <i class="fas fa-arrow-left"></i> ダッシュボードに戻る
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // 現在時刻の表示
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ja-JP', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('current-time').textContent = timeString;
+            
+            const headerTimeString = now.toLocaleString('ja-JP', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('header-time').textContent = headerTimeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // 出勤処理
+        function clockIn() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ja-JP', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            if (confirm(`${timeString} に出勤しますか？`)) {
+                document.getElementById('clock-in-time').textContent = timeString;
+                document.querySelector('.btn-clock-in').disabled = true;
+                document.querySelector('.btn-clock-out').disabled = false;
+                alert('出勤を記録しました。今日も一日頑張りましょう！');
+                
+                // 勤務時間の計算を開始
+                updateWorkHours();
+            }
+        }
+
+        // 退勤処理
+        function clockOut() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ja-JP', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            if (confirm(`${timeString} に退勤しますか？`)) {
+                document.getElementById('clock-out-time').textContent = timeString;
+                document.querySelector('.btn-clock-out').disabled = true;
+                alert('退勤を記録しました。お疲れ様でした！');
+                
+                // 勤務時間の最終計算
+                updateWorkHours();
+            }
+        }
+
+        // 勤務時間の計算
+        function updateWorkHours() {
+            const clockInTime = document.getElementById('clock-in-time').textContent;
+            const clockOutTime = document.getElementById('clock-out-time').textContent;
+            
+            if (clockInTime !== '-' && clockOutTime === '-') {
+                // 出勤中の場合はリアルタイムで更新
+                setInterval(() => {
+                    const now = new Date();
+                    const [inHour, inMinute] = clockInTime.split(':').map(Number);
+                    const inDate = new Date();
+                    inDate.setHours(inHour, inMinute, 0);
+                    
+                    const diff = now - inDate;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    document.getElementById('work-hours').textContent = `${hours}時間${minutes}分`;
+                }, 60000); // 1分ごとに更新
+            } else if (clockInTime !== '-' && clockOutTime !== '-') {
+                // 退勤済みの場合は固定値
+                const [inHour, inMinute] = clockInTime.split(':').map(Number);
+                const [outHour, outMinute] = clockOutTime.split(':').map(Number);
+                
+                const inMinutes = inHour * 60 + inMinute;
+                const outMinutes = outHour * 60 + outMinute;
+                const workMinutes = outMinutes - inMinutes - 60; // 休憩1時間を引く
+                
+                const hours = Math.floor(workMinutes / 60);
+                const minutes = workMinutes % 60;
+                
+                document.getElementById('work-hours').textContent = `${hours}時間${minutes}分`;
+            }
+        }
+
+        // シフト申請
+        function submitShiftRequest(event) {
+            event.preventDefault();
+            alert('シフト申請を送信しました。\n承認結果は後日お知らせします。');
+            event.target.reset();
+        }
+    </script>
+</body>
+</html> 
